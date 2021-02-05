@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'WearWareRESTAPI'
-    'rest_framework'
+    'WearWareRESTAPI',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
