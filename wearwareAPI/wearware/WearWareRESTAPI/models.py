@@ -17,7 +17,6 @@ class ActivityLevel(models.Model):
     calories = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'activity_level'
         unique_together = (('participant_id', 'datetime'),)
 
@@ -28,7 +27,6 @@ class HeartRate(models.Model):
     bpm = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'heart_rate'
         unique_together = (('participant_id', 'datetime'),)
 
@@ -36,37 +34,34 @@ class HeartRate(models.Model):
 class Participant(models.Model):
     participant_id = models.IntegerField(primary_key=True)
     subscriber_id = models.IntegerField(blank=True, null=True)
-    device_model = models.CharField(max_length=-1, blank=True, null=True)
-    device_version = models.CharField(max_length=-1, blank=True, null=True)
-    device_status = models.CharField(max_length=-1, blank=True, null=True)
+    device_model = models.CharField(max_length=20, blank=True, null=True)
+    device_version = models.CharField(max_length=20, blank=True, null=True)
+    device_status = models.CharField(max_length=20, blank=True, null=True)
     last_logged_activity = models.DateTimeField(blank=True, null=True)
-    email = models.CharField(max_length=-1, blank=True, null=True)
+    email = models.CharField(max_length=20, blank=True, null=True)
     join_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'participant'
 
 
 class ParticipantStudy(models.Model):
-    participant_id = models.CharField(primary_key=True, max_length=-1)
+    participant_id = models.CharField(primary_key=True, max_length=20)
     study_id = models.IntegerField()
-    partipant_id_pk = models.CharField(max_length=-1, blank=True, null=True)
+    partipant_id_pk = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'participant_study'
         unique_together = (('participant_id', 'study_id'),)
 
 
 class Researcher(models.Model):
     researcher_id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=-1, blank=True, null=True)
-    email = models.CharField(max_length=-1, blank=True, null=True)
-    permissions = models.CharField(max_length=-1, blank=True, null=True)
+    name = models.CharField(max_length=20, blank=True, null=True)
+    email = models.CharField(max_length=20, blank=True, null=True)
+    permissions = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'researcher'
 
 
@@ -75,7 +70,6 @@ class ResearcherStudy(models.Model):
     study_id = models.IntegerField()
 
     class Meta:
-        managed = False
         db_table = 'researcher_study'
         unique_together = (('researcher_id', 'study_id'),)
 
@@ -90,22 +84,20 @@ class SleepData(models.Model):
     wake = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'sleep_data'
         unique_together = (('participant_id', 'datetime'),)
 
 
 class Study(models.Model):
     study_id = models.IntegerField(primary_key=True)
-    study_title = models.CharField(max_length=-1, blank=True, null=True)
-    short_name = models.CharField(max_length=-1, blank=True, null=True)
-    study_desc = models.CharField(max_length=-1, blank=True, null=True)
+    study_title = models.CharField(max_length=20, blank=True, null=True)
+    short_name = models.CharField(max_length=20, blank=True, null=True)
+    study_desc = models.CharField(max_length=20, blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    study_url = models.CharField(max_length=-1, blank=True, null=True)
+    study_url = models.CharField(max_length=20, blank=True, null=True)
     researcher_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'study'
 

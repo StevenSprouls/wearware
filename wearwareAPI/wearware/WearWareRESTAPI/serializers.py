@@ -1,36 +1,66 @@
-# API <--> APPLICATION....json format
+from rest_framework.serializers import ModelSerializer
+from WearWareRESTAPI.models import ActivityLevel, HeartRate, Participant, ParticipantStudy, Researcher, ResearcherStudy, SleepData, Study
 
-from rest_framework import serializers
-from .models import *
 
-class ParticipantSerializer(serializers.ModelSerializer):
-    model = Participant
-    fields = '__all__'
+class ActivityLevelSerializer(ModelSerializer):
 
-class ParticipantStudySerializer(serializers.ModelSerializer):
-    model = ParticipantStudy
-    fields = '__all__'
+    class Meta:
+        model = ActivityLevel
+        depth = 2
+        fields = '__all__'
 
-class StudySerializer(serializers.ModelSerializer):
-    model = Study
-    fields = '__all__'
 
-class ResearcherStudySerializer(serializers.ModelSerializer):
-    model = Researcher_Study
-    fields = '__all__'
+class HeartRateSerializer(ModelSerializer):
 
-class ResearcherSerializer(serializers.ModelSerializer):
-    model = Researcher
-    fields = '__all__'
+    class Meta:
+        model = HeartRate
+        depth = 2
+        fields = '__all__'
 
-class ActivityLevelSerializer(serializers.ModelSerializer):
-    model = Activity_Level
-    fields = '__all__'
 
-class HeartRateSerializer(serializers.ModelSerializer):
-    model = Heart_Rate
-    fields = '__all__'
+class ParticipantSerializer(ModelSerializer):
 
-class SleepDataSerializer(serializers.ModelSerializer):
-    model = Sleep_Data
-    fields = '__all__'
+    class Meta:
+        model = Participant
+        depth = 2
+        fields = '__all__'
+
+
+class ParticipantStudySerializer(ModelSerializer):
+
+    class Meta:
+        model = ParticipantStudy
+        depth = 2
+        fields = '__all__'
+
+
+class ResearcherSerializer(ModelSerializer):
+
+    class Meta:
+        model = Researcher
+        depth = 2
+        fields = '__all__'
+
+
+class ResearcherStudySerializer(ModelSerializer):
+
+    class Meta:
+        model = ResearcherStudy
+        depth = 2
+        fields = '__all__'
+
+
+class SleepDataSerializer(ModelSerializer):
+
+    class Meta:
+        model = SleepData
+        depth = 2
+        fields = '__all__'
+
+
+class StudySerializer(ModelSerializer):
+
+    class Meta:
+        model = Study
+        depth = 2
+        fields = '__all__'

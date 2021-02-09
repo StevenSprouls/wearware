@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'WearWareRESTAPI',
     'rest_framework',
+    'drf_generators',
+    'api',
 ]
 
 MIDDLEWARE = [
