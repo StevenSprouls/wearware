@@ -78,10 +78,11 @@ WSGI_APPLICATION = 'wearwareAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wearwareDB',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
+        'NAME': 'wearware',
+        'USER': 'wearware',
+        'PASSWORD': 'databit!',
+        'HOST': 'wearware.cqr2btyia7sd.us-west-1.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
