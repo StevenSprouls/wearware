@@ -1,22 +1,34 @@
-"""wearwareAPI URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path, include
+from django.conf.urls import url
+from rest_framework.urlpatterns import format_suffix_patterns
+from WearWareRESTAPI import views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+
+    url(r'^activitylevel/(?P<pk>[0-9]+)/$', views.activitylevel_detail),
+    url(r'^activitylevel/$', views.activitylevel_list),
+
+    url(r'^heartrate/(?P<pk>[0-9]+)/$', views.heartrate_detail),
+    url(r'^heartrate/$', views.heartrate_list),
+
+    url(r'^participant/(?P<pk>[0-9]+)/$', views.participant_detail),
+    url(r'^participant/$', views.participant_list),
+
+    url(r'^participantstudy/(?P<pk>[0-9]+)/$', views.participantstudy_detail),
+    url(r'^participantstudy/$', views.participantstudy_list),
+
+    url(r'^researcher/(?P<pk>[0-9]+)/$', views.researcher_detail),
+    url(r'^researcher/$', views.researcher_list),
+
+    url(r'^researcherstudy/(?P<pk>[0-9]+)/$', views.researcherstudy_detail),
+    url(r'^researcherstudy/$', views.researcherstudy_list),
+
+    url(r'^sleepdata/(?P<pk>[0-9]+)/$', views.sleepdata_detail),
+    url(r'^sleepdata/$', views.sleepdata_list),
+
+    url(r'^study/(?P<pk>[0-9]+)/$', views.study_detail),
+    url(r'^study/$', views.study_list),
+
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
