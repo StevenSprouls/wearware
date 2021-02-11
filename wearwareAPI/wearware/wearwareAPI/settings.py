@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'WearWareRESTAPI',
     'rest_framework',
     'drf_generators',
-    'api',
+    'wearwareAPI',
 ]
 
 MIDDLEWARE = [
