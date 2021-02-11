@@ -1,34 +1,31 @@
-from django.conf.urls import url
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.conf.urls import include, url
 from WearWareRESTAPI import views
 
 
 urlpatterns = [
 
-    url(r'^activitylevel/(?P<pk>[0-9]+)/$', views.activitylevel_detail),
-    url(r'^activitylevel/$', views.activitylevel_list),
+  url(r'^activitylevel/(?P<id>[0-9]+)/$', views.ActivityLevelAPIView.as_view()),
+  url(r'^activitylevel/$', views.ActivityLevelAPIListView.as_view()),
 
-    url(r'^heartrate/(?P<pk>[0-9]+)/$', views.heartrate_detail),
-    url(r'^heartrate/$', views.heartrate_list),
+  url(r'^heartrate/(?P<id>[0-9]+)/$', views.HeartRateAPIView.as_view()),
+  url(r'^heartrate/$', views.HeartRateAPIListView.as_view()),
 
-    url(r'^participant/(?P<pk>[0-9]+)/$', views.participant_detail),
-    url(r'^participant/$', views.participant_list),
+  url(r'^participant/(?P<id>[0-9]+)/$', views.ParticipantAPIView.as_view()),
+  url(r'^participant/$', views.ParticipantAPIListView.as_view()),
 
-    url(r'^participantstudy/(?P<pk>[0-9]+)/$', views.participantstudy_detail),
-    url(r'^participantstudy/$', views.participantstudy_list),
+  url(r'^participantstudy/(?P<id>[0-9]+)/$', views.ParticipantStudyAPIView.as_view()),
+  url(r'^participantstudy/$', views.ParticipantStudyAPIListView.as_view()),
 
-    url(r'^researcher/(?P<pk>[0-9]+)/$', views.researcher_detail),
-    url(r'^researcher/$', views.researcher_list),
+  url(r'^researcher/(?P<id>[0-9]+)/$', views.ResearcherAPIView.as_view()),
+  url(r'^researcher/$', views.ResearcherAPIListView.as_view()),
 
-    url(r'^researcherstudy/(?P<pk>[0-9]+)/$', views.researcherstudy_detail),
-    url(r'^researcherstudy/$', views.researcherstudy_list),
+  url(r'^researcherstudy/(?P<id>[0-9]+)/$', views.ResearcherStudyAPIView.as_view()),
+  url(r'^researcherstudy/$', views.ResearcherStudyAPIListView.as_view()),
 
-    url(r'^sleepdata/(?P<pk>[0-9]+)/$', views.sleepdata_detail),
-    url(r'^sleepdata/$', views.sleepdata_list),
+  url(r'^sleepdata/(?P<id>[0-9]+)/$', views.SleepDataAPIView.as_view()),
+  url(r'^sleepdata/$', views.SleepDataAPIListView.as_view()),
 
-    url(r'^study/(?P<pk>[0-9]+)/$', views.study_detail),
-    url(r'^study/$', views.study_list),
+  url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
+  url(r'^study/$', views.StudyAPIListView.as_view()),
 
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)
