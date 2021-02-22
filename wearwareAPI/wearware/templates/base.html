@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Home {% endblock title %} WearWare </title>
+  {% block head_meta %}
+    {% block head_meta_charset %}
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=utf-8" />
+    {% endblock head_meta_charset %}
+    {% block head_meta_contentlanguage %}
+        <meta http-equiv="Content-Language" value="en-US" />
+    {% endblock head_meta_contentlanguage %}
+    {% block head_meta_viewport %}
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+    {% endblock head_meta_viewport %}
+  {% endblock head_meta %}
+  {% block head_css %}
+    {% block head_css_site %}
+        <link href="{{ STATIC_URL }}css/bootstrap.min.css"
+              rel="stylesheet" media="screen">
+        <link href="{{ STATIC_URL }}css/app.css"
+              rel="stylesheet" media="screen">
+    {% endblock head_css_site %}
+    {% block head_css_section %}{% endblock head_css_section %}
+    {% block head_css_page %}{% endblock head_css_page %}
+  {% endblock head_css %}
+</head>
+{% block conent %}
+<body>
+    {# Navigation Menu #}
+  <header>
+      <div class="topnav">
+              <div class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav navbar-right">
+                          <a href="{% url 'WearWareRESTAPI:study' %}">Studies</a>
+                          <a href="{% url 'WearWareRESTAPI:activitylevel' %}">Activity Level</a>
+                          <a href="{% url 'WearWareRESTAPI:heartrate' %}">Heart Rates</a></li>
+                          <a href="{% url 'WearWareRESTAPI:participant' %}">Participants</a>
+                          <a href="{% url 'WearWareRESTAPI:participantstudy' %}">Participant Studies</a>
+                          <a href="{% url 'WearWareRESTAPI:researcher' %}">Researchers</a>
+                          <a href="{% url 'WearWareRESTAPI:researcherstudy' %}">Researcher Studies</a>
+                          <a href="{% url 'WearWareRESTAPI:sleepdata' %}">Sleep Data</a>
+                  </ul>
+                    <style>
+                      .topnav {
+                        background-color: #333;
+                        overflow: hidden;
+                      }
+
+                      /* Style the links inside the navigation bar */
+                      .topnav a {
+                        color: #f2f2f2;
+                        padding: 1%;
+                        float: left;
+                        text-decoration: none;
+                        font-size: 17px;
+                      }
+
+                      /* Change the color of links on hover */
+                      .topnav a:hover {
+                        background-color: #ddd;
+                        color: black;
+                      }
+
+                      /* Add a color to the active/current link */
+                      .topnav a.active {
+                        background-color: #4CAF50;
+                        color: white;
+                      }
+                    </style>
+              </div>
+          </div>
+      </div>
+  </header>
+  {# The Document Body #}
+  <div id="site-wrapper">
+      {% block content %}
+          if you see this, something is wrong!
+      {% endblock content %}
+  </div>
+  {# The Footer #}
+  <div class="footer">
+      <div class="container">
+      </div>
+  </div>
+</body>
+{% endblock %}
+</html>
