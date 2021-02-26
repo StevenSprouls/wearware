@@ -9,7 +9,7 @@ from django.db import models
 #Delete / Remove - DELETE
 
 class ActivityLevel(models.Model):
-    participant_id = models.IntegerField(primary_key=True)
+    participant = models.OneToOneField('Participant', models.DO_NOTHING, primary_key=True)
     datetime = models.DateTimeField()
     activity_level = models.IntegerField(blank=True, null=True)
     steps = models.IntegerField(blank=True, null=True)
@@ -18,17 +18,17 @@ class ActivityLevel(models.Model):
 
     class Meta:
         db_table = 'activity_level'
-        unique_together = (('participant_id', 'datetime'),)
+        unique_together = (('participant', 'datetime'),)
 
 
 class HeartRate(models.Model):
-    participant_id = models.IntegerField(primary_key=True)
+    participant = models.OneToOneField('Participant', models.DO_NOTHING, primary_key=True)
     datetime = models.DateTimeField()
     bpm = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'heart_rate'
-        unique_together = (('participant_id', 'datetime'),)
+        unique_together = (('participant', 'datetime'), ('participant', 'datetime'),)
 
 
 class Participant(models.Model):
@@ -46,13 +46,13 @@ class Participant(models.Model):
 
 
 class ParticipantStudy(models.Model):
-    participant_id = models.CharField(primary_key=True, max_length=20)
-    study_id = models.IntegerField()
-    partipant_id_pk = models.CharField(max_length=20, blank=True, null=True)
+    participant = models.ForeignKey(Participant, models.DO_NOTHING)
+    study = models.OneToOneField('Study', models.DO_NOTHING, primary_key=True)
+    enrollment_id = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         db_table = 'participant_study'
-        unique_together = (('participant_id', 'study_id'),)
+        unique_together = (('study', 'participant'),)
 
 
 class Researcher(models.Model):
@@ -66,16 +66,16 @@ class Researcher(models.Model):
 
 
 class ResearcherStudy(models.Model):
-    researcher_id = models.IntegerField(primary_key=True)
-    study_id = models.IntegerField()
+    researcher = models.OneToOneField(Researcher, models.DO_NOTHING, primary_key=True)
+    study = models.ForeignKey('Study', models.DO_NOTHING)
 
     class Meta:
         db_table = 'researcher_study'
-        unique_together = (('researcher_id', 'study_id'),)
+        unique_together = (('researcher', 'study'),)
 
 
 class SleepData(models.Model):
-    participant_id = models.IntegerField(primary_key=True)
+    participant = models.OneToOneField(Participant, models.DO_NOTHING, primary_key=True)
     datetime = models.DateTimeField()
     light_sleep = models.IntegerField(blank=True, null=True)
     rem = models.IntegerField(blank=True, null=True)
@@ -85,8 +85,7 @@ class SleepData(models.Model):
 
     class Meta:
         db_table = 'sleep_data'
-        unique_together = (('participant_id', 'datetime'),)
-
+        unique_together = (('participant', 'datetime'),)
 
 class Study(models.Model):
     study_id = models.IntegerField(primary_key=True)
@@ -100,4 +99,3 @@ class Study(models.Model):
 
     class Meta:
         db_table = 'study'
-
