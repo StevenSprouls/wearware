@@ -39,6 +39,7 @@ class ActivityLevelAPIView(APIView):
 
 
 class ActivityLevelAPIListView(APIView):
+    serializer_class = ActivityLevelSerializer
 
     def get(self, request, format=None):
         items = ActivityLevel.objects.order_by('pk')
@@ -86,6 +87,7 @@ class HeartRateAPIView(APIView):
 
 
 class HeartRateAPIListView(APIView):
+    serializer_class = HeartRateSerializer
 
     def get(self, request, format=None):
         items = HeartRate.objects.order_by('pk')
@@ -133,6 +135,7 @@ class ParticipantAPIView(APIView):
 
 
 class ParticipantAPIListView(APIView):
+    serializer_class = ParticipantSerializer
 
     def get(self, request, format=None):
         items = Participant.objects.order_by('pk')
@@ -180,6 +183,7 @@ class ParticipantStudyAPIView(APIView):
 
 
 class ParticipantStudyAPIListView(APIView):
+    serializer_class = ParticipantStudySerializer
 
     def get(self, request, format=None):
         items = ParticipantStudy.objects.order_by('pk')
@@ -227,6 +231,7 @@ class ResearcherAPIView(APIView):
 
 
 class ResearcherAPIListView(APIView):
+    serializer_class = ResearcherSerializer
 
     def get(self, request, format=None):
         items = Researcher.objects.order_by('pk')
@@ -274,6 +279,7 @@ class ResearcherStudyAPIView(APIView):
 
 
 class ResearcherStudyAPIListView(APIView):
+    serializer_class = ResearcherStudySerializer
 
     def get(self, request, format=None):
         items = ResearcherStudy.objects.order_by('pk')
@@ -321,6 +327,7 @@ class SleepDataAPIView(APIView):
 
 
 class SleepDataAPIListView(APIView):
+    serializer_class = SleepDataSerializer
 
     def get(self, request, format=None):
         items = SleepData.objects.order_by('pk')
@@ -368,6 +375,7 @@ class StudyAPIView(APIView):
 
 
 class StudyAPIListView(APIView):
+    serializer_class = StudySerializer
 
     def get(self, request, format=None):
         items = Study.objects.order_by('pk')

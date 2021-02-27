@@ -31,7 +31,7 @@ class ParticipantStudySerializer(ModelSerializer):
     class Meta:
         model = ParticipantStudy
         depth = 2
-        fields = '__all__'
+        fields = ('__all__')
 
 
 class ResearcherSerializer(ModelSerializer):
