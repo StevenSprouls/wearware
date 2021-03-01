@@ -1,4 +1,4 @@
-import fitbit
+import fitbit.api
 import gather_keys_oauth2 as Oauth2
 import pandas as pd
 import datetime
@@ -16,25 +16,23 @@ ACCESS_TOKEN=str(server.fitbit.client.session.token['access_token'])
 REFRESH_TOKEN=str(server.fitbit.client.session.token['refresh_token'])
 
 #variable with the authorization from Oauth2 and the tokens retrieved
-auth2_client=fitbit.Fitbit(CLIENT_ID,CLIENT_SECRET,oauth2=True,
+auth2_client=fitbit.Fitbit(client_id,client_secret,oauth2=True,
                            access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN)
 
 #test date for getting 1 day of data from 02/23/2021
-oneDate = pd.datetime(year = 2021, month = 2, day = 23)
+oneDate = pd.datetime(year = 2021, month = 2, day = 28)
 
 
 #Fetches intraday data for heartrate using above date at second level detail
-help(auth2_client.intraday_time_series)
-oneDayData = auth2_client.intraday_time_series('activities/heart',
-                                               base_date=oneDate,
-                                               detail_level='1sec')
-
+help(auth2_client.activity_stats)
+oneDayData = auth2_client.activity_stats()
+print(oneDayData)
 #places data retrieved in a dataframe for ease of use
-df = pd.DataFrame(oneDayData['activities-heart-intraday']['dataset'])
-df.head()
+##df = pd.DataFrame(oneDayData['activity_stats']['dataset'])
+##df.head()
 
 #creates file for csv export
-filename = oneDayData['activities-heart'][0]['dateTime'] +'_intradata'
-
+##filename = oneDayData['activities-heart'][0]['dateTime'] +'_intradata'
+print("successfully got to here")
 # Export file to csv
-df.to_csv(filename + '.csv', index = False)
+##df.to_csv(filename + '.csv', index = False)
