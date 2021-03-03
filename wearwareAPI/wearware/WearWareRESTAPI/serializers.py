@@ -27,7 +27,7 @@ class ParticipantStudySerializer(ModelSerializer):
 
     class Meta:
         model = ParticipantStudy
-        fields = ('__all__')
+        fields = '__all__'
 
 
 class ResearcherSerializer(ModelSerializer):
