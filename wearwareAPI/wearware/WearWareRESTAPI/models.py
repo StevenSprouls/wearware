@@ -8,6 +8,7 @@ from django.utils.timezone import now
 
 
 class Study(models.Model):
+    #a study owns subjects
     name = models.CharField(max_length=150, default='')
     creation_time = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
@@ -25,6 +26,7 @@ class Study(models.Model):
         )
 
 class Participant(models.Model):
+    #subject in a study, owns a fitbit account
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(max_length=100, db_index=True, unique=True)
@@ -36,7 +38,8 @@ class Participant(models.Model):
     def __str__(self):
         return self.email
 
-class FitbitAccount(models.Model):
+class FitbitAccount(models.Model): 
+    #fitbit acc owned by subject
     identifier = models.CharField(max_length=10, db_index=True)
     subject = models.ForeignKey(Participant, db_index=True, on_delete=models.PROTECT)
     is_active = models.BooleanField(default=True)
@@ -49,6 +52,7 @@ class FitbitAccount(models.Model):
         return self.subject.first_name + '\'s fitbit'
 
 class FitbitMinuteRecord(models.Model):
+    #a single minute record for a fitbit account...owns heart rate records
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(db_index=True)
     steps = models.IntegerField(db_index=True, null=True, blank=True)
@@ -61,11 +65,13 @@ class FitbitMinuteRecord(models.Model):
         return self.device.subject.email + ' fitbit @ ' + str(self.timestamp)
 
 class FitbitHeartRecord(models.Model):
+    #a single heart rate record...owned by a minute record
     minute_record = models.ForeignKey(FitbitMinuteRecord, db_index=True, on_delete=models.PROTECT)
     second = models.IntegerField()
     bpm = models.IntegerField()
 
 class FitbitSleepRecord(models.Model):
+    #a single sleep record related to a fitbit account
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     timestamp = models.DateField()
     record_number = models.IntegerField()
@@ -80,6 +86,7 @@ class FitbitSleepRecord(models.Model):
         unique_together = ('timestamp', 'record_number')
 
 class SyncRecord(models.Model):
+    #A metadata record for a given sync interval.
     device = models.ForeignKey(FitbitAccount, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     start_time = models.DateTimeField()
