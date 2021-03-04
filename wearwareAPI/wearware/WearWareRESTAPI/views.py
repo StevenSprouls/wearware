@@ -10,7 +10,7 @@ def index(request):
     return render(request, "index.html")
 
 class StudyAPIView(APIView):
-
+    serializer_class = StudySerializer
     def get(self, request, id, format=None):
         try:
             item = Study.objects.filter(pk=id)
@@ -57,6 +57,7 @@ class StudyAPIListView(APIView):
 
 
 class ParticipantAPIView(APIView):
+    serializer_class = ParticipantSerializer
 
     def get(self, request, id, format=None):
         try:
@@ -107,21 +108,11 @@ class FitbitMinuteRecordAPIView(APIView):
     def get(self, request, id, format=None):
         try:
             item = FitbitMinuteRecord.objects.filter(pk=id)
-            serializer = FitbitMinuteRecordSerializer(item, many=True)
+            serializer = MinuteRecordSerializer(item, many=True)
             return Response(serializer.data)
         except FitbitMinuteRecord.DoesNotExist:
             return Response(status=404)
 
-    def put(self, request, id, format=None):
-        try:
-            item = FitbitMinuteRecord.objects.get(pk=id)
-        except FitbitMinuteRecord.DoesNotExist:
-            return Response(status=404)
-        serializer = FitbitMinuteRecordSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
@@ -147,21 +138,10 @@ class FitbitHeartRecordAPIView(APIView):
     def get(self, request, id, format=None):
         try:
             item = FitbitHeartRecord.objects.filter(pk=id)
-            serializer = FitbitHeartRecordSerializer(item, many=True)
+            serializer = HeartRateRecordSerializer(item, many=True)
             return Response(serializer.data)
         except FitbitHeartRecord.DoesNotExist:
             return Response(status=404)
-
-    def put(self, request, id, format=None):
-        try:
-            item = FitbitHeartRecord.objects.get(pk=id)
-        except FitbitHeartRecord.DoesNotExist:
-            return Response(status=404)
-        serializer = FitbitHeartRecordSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
@@ -192,17 +172,6 @@ class FitbitSleepRecordAPIView(APIView):
         except FitbitSleepRecord.DoesNotExist:
             return Response(status=404)
 
-    def put(self, request, id, format=None):
-        try:
-            item = FitbitSleepRecord.objects.get(pk=id)
-        except FitbitSleepRecord.DoesNotExist:
-            return Response(status=404)
-        serializer = FitbitSleepRecordSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
     def delete(self, request, id, format=None):
         try:
             item = FitbitSleepRecord.objects.get(pk=id)
@@ -232,17 +201,6 @@ class SyncRecordAPIView(APIView):
         except SyncRecord.DoesNotExist:
             return Response(status=404)
 
-    def put(self, request, id, format=None):
-        try:
-            item = SyncRecord.objects.get(pk=id)
-        except SyncRecord.DoesNotExist:
-            return Response(status=404)
-        serializer = SyncRecordSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
     def delete(self, request, id, format=None):
         try:
             item = SyncRecord.objects.get(pk=id)
@@ -262,6 +220,7 @@ class SyncRecordAPIListView(APIView):
         return paginator.get_paginated_response(serializer.data)
 
 class StudyHasParticipantAPIView(APIView):
+    serializer_class = StudyHasParticipantSerializer
 
     def get(self, request, id, format=None):
         try:
@@ -309,6 +268,7 @@ class StudyHasParticipantAPIListView(APIView):
 
 
 class ResearcherHasStudyAPIView(APIView):
+    serializer_class = ResearcherHasStudySerializer
 
     def get(self, request, id, format=None):
         try:
