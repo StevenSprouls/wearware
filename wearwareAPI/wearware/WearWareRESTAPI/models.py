@@ -117,4 +117,6 @@ class ResearcherHasStudy(models.Model):
 
 
 #for the researcher model, first a user needs to be created by typing "python manage.py shell" and
+# then from django.contrib.auth.models import User
 # then User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+# delete a user with User.objects.get(username="john").delete()
