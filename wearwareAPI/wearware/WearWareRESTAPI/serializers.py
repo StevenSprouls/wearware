@@ -1,59 +1,51 @@
-from rest_framework.serializers import ModelSerializer
-from WearWareRESTAPI.models import ActivityLevel, HeartRate, Participant, ParticipantStudy, Researcher, ResearcherStudy, SleepData, Study
+from rest_framework import serializers
+from WearWareRESTAPI.models import *
 
-
-class ActivityLevelSerializer(ModelSerializer):
-
+class StudySerializer(serializers.ModelSerializer):
+    
     class Meta:
-        model = ActivityLevel
+        model = Study
         fields = '__all__'
 
-
-class HeartRateSerializer(ModelSerializer):
-
+class StudyHasParticipantSerializer(serializers.ModelSerializer):
+    
     class Meta:
-        model = HeartRate
+        model = StudyHasParticipant
+        fields = ['study', 'participant']
+
+class ResearcherHasStudySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ResearcherHasStudy
         fields = '__all__'
+    
 
-
-class ParticipantSerializer(ModelSerializer):
+class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = '__all__'
+        fields = ['pk', 'email', 'sex', 'gender']
 
-
-class ParticipantStudySerializer(ModelSerializer):
-
-    class Meta:
-        model = ParticipantStudy
-        fields = '__all__'
-
-
-class ResearcherSerializer(ModelSerializer):
+class HeartRateRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Researcher
+        model = FitbitHeartRecord
         fields = '__all__'
 
-
-class ResearcherStudySerializer(ModelSerializer):
+class MinuteRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ResearcherStudy
-        fields = '__all__'
+        model = FitbitMinuteRecord
+        fields = ['pk', 'timestamp', 'steps', 'calories', 'mets', 'activity_level', 'distance']
 
-
-class SleepDataSerializer(ModelSerializer):
-
-    class Meta:
-        model = SleepData
-        fields = '__all__'
-
-
-class StudySerializer(ModelSerializer):
+class SleepRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Study
-        depth = 2
-        fields = '__all__'
+        model = FitbitSleepRecord
+        exclude = ['device']
+
+class SyncRecordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SyncRecord
+        exclude = ['device']
