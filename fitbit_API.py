@@ -1,4 +1,4 @@
-import fitbit.api
+import fitbit
 import gather_keys_oauth2 as Oauth2
 import pandas as pd
 import datetime
@@ -24,8 +24,8 @@ oneDate = pd.datetime(year = 2021, month = 2, day = 28)
 
 
 #Fetches intraday data for heartrate using above date at second level detail
-help(auth2_client.activity_stats)
-oneDayData = auth2_client.activity_stats()
+##help(auth2_client.activity_stats)
+oneDayData = auth2_client.intraday_time_series('activities/heart', base_date=oneDate, detail_level='1sec')
 print(oneDayData)
 #places data retrieved in a dataframe for ease of use
 ##df = pd.DataFrame(oneDayData['activity_stats']['dataset'])
