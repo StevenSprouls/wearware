@@ -2,32 +2,33 @@ from django.conf.urls import include, url
 from WearWareRESTAPI import views
 from django.urls import path
 
+
 app_name= 'WearWareRESTAPI'
 urlpatterns = [
   path("", views.index, name="index"),
 
-  url(r'^activitylevel/(?P<id>[0-9]+)/$', views.ActivityLevelAPIView.as_view()),
-  url(r'^activitylevel/$', views.ActivityLevelAPIListView.as_view(), name='activitylevel'),
-
-  url(r'^heartrate/(?P<id>[0-9]+)/$', views.HeartRateAPIView.as_view()),
-  url(r'^heartrate/$', views.HeartRateAPIListView.as_view(), name='heartrate'),
+  url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
+  url(r'^study/$', views.StudyAPIListView.as_view(), name='study'),
 
   url(r'^participant/(?P<id>[0-9]+)/$', views.ParticipantAPIView.as_view()),
   url(r'^participant/$', views.ParticipantAPIListView.as_view(), name='participant'),
 
-  url(r'^participantstudy/(?P<id>[0-9]+)/$', views.ParticipantStudyAPIView.as_view()),
-  url(r'^participantstudy/$', views.ParticipantStudyAPIListView.as_view(), name='participantstudy'),
+  url(r'^fitbitminuterecord/(?P<id>[0-9]+)/$', views.FitbitMinuteRecordAPIView.as_view()),
+  url(r'^fitbitminuterecord/$', views.FitbitMinuteRecordAPIListView.as_view(),name='fitbitactivityrecord'),
 
-  url(r'^researcher/(?P<id>[0-9]+)/$', views.ResearcherAPIView.as_view()),
-  url(r'^researcher/$', views.ResearcherAPIListView.as_view(), name='researcher'),
+  url(r'^fitbitheartrecord/(?P<id>[0-9]+)/$', views.FitbitHeartRecordAPIView.as_view()),
+  url(r'^fitbitheartrecord/$', views.FitbitHeartRecordAPIListView.as_view(),name='fitbitheartrecord'),
 
-  url(r'^researcherstudy/(?P<id>[0-9]+)/$', views.ResearcherStudyAPIView.as_view()),
-  url(r'^researcherstudy/$', views.ResearcherStudyAPIListView.as_view(), name='researcherstudy'),
+  url(r'^fitbitsleeprecord/(?P<id>[0-9]+)/$', views.FitbitSleepRecordAPIView.as_view()),
+  url(r'^fitbitsleeprecord/$', views.FitbitSleepRecordAPIListView.as_view(),name='fitbitsleeprecord'),
 
-  url(r'^sleepdata/(?P<id>[0-9]+)/$', views.SleepDataAPIView.as_view()),
-  url(r'^sleepdata/$', views.SleepDataAPIListView.as_view(), name='sleepdata'),
+  url(r'^syncrecord/(?P<id>[0-9]+)/$', views.SyncRecordAPIView.as_view()),
+  url(r'^syncrecord/$', views.SyncRecordAPIListView.as_view(),name='syncrecord'),
 
-  url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
-  url(r'^study/$', views.StudyAPIListView.as_view(), name='study'),
+  url(r'^studyhasparticipant/(?P<id>[0-9]+)/$', views.StudyHasParticipantAPIView.as_view()),
+  url(r'^studyhasparticipant/$', views.StudyHasParticipantAPIListView.as_view(),name='studyhasparticipant'),
+
+  url(r'^researcherhasstudy/(?P<id>[0-9]+)/$', views.ResearcherHasStudyAPIView.as_view()),
+  url(r'^researcherhasstudy/$', views.ResearcherHasStudyAPIListView.as_view(),name='researcherhasstudy'),
 
 ]
