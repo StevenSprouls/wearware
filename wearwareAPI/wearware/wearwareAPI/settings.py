@@ -12,9 +12,32 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERYBEAT_SCHEDULE = {
+    'fitbit-refresh-tokens': {
+        'task': 'wearware.fitbit_tasks.fitbit_refresh_tokens',
+        'schedule': timedelta(minutes=10),
+        'args': (),
+    },
+    'fitbit-update-activity-data': {
+        'task': 'wearware.fitbit_tasks.fitbit_update_activity_data',
+        'schedule': timedelta(minutes=10),
+        'args': (),
+    },
+    'inactive_participant_action': {
+        'task': 'wearware.fitbit_tasks.inactive_participant_action',
+        'schedule': timedelta(days=1),
+        'args': (),
+    },
+}
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,6 +51,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = "wearware.test@gmail.com"
+EMAIL_HOST_PASSWORD = "Nu77P@$s"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+SERVER_EMAIL = 'wearware.test@gmail.com'
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
+
+ADMINS = (('Kyle Winfree', 'kyle.winfree@nau.edu'),)
+MANAGERS = ADMINS
 
 # Application definition
 
