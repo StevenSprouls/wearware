@@ -66,7 +66,7 @@ class FitbitMinuteRecord(models.Model):
 
 class FitbitHeartRecord(models.Model):
     #a single heart rate record owned by a fitbit account
-    device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
+    device = models.ForeignKey(FitbitMinuteRecord, db_index=True, on_delete=models.PROTECT)
     second = models.IntegerField()
     bpm = models.IntegerField()
 
