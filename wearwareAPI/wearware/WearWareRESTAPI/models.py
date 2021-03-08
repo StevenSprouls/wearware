@@ -2,6 +2,7 @@ import uuid
 import random
 import string
 from django.contrib.auth.models import User
+from django.contrib.auth import admin
 from django.db import models
 from datetime import timedelta
 from django.utils.timezone import now
