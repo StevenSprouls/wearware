@@ -52,7 +52,7 @@ class FitbitAccount(models.Model):
         return self.subject.first_name + '\'s fitbit'
 
 class FitbitMinuteRecord(models.Model):
-    #a single minute record for a fitbit account...owns heart rate records
+    #a single minute record owned by a fitbit account
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(db_index=True)
     steps = models.IntegerField(db_index=True, null=True, blank=True)
@@ -65,8 +65,8 @@ class FitbitMinuteRecord(models.Model):
         return self.device.subject.email + ' fitbit @ ' + str(self.timestamp)
 
 class FitbitHeartRecord(models.Model):
-    #a single heart rate record...owned by a minute record
-    minute_record = models.ForeignKey(FitbitMinuteRecord, db_index=True, on_delete=models.PROTECT)
+    #a single heart rate record owned by a fitbit account
+    device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     second = models.IntegerField()
     bpm = models.IntegerField()
 
