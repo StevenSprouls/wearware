@@ -23,17 +23,17 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERYBEAT_SCHEDULE = {
     'fitbit-refresh-tokens': {
-        'task': 'wearware.fitbit_tasks.fitbit_refresh_tokens',
+        'task': 'WearWareRESTAPI.tasks.fitbit_refresh_tokens',
         'schedule': timedelta(minutes=10),
         'args': (),
     },
     'fitbit-update-activity-data': {
-        'task': 'wearware.fitbit_tasks.fitbit_update_activity_data',
+        'task': 'WearWareRESTAPI.tasks.fitbit_update_activity_data',
         'schedule': timedelta(minutes=10),
         'args': (),
     },
     'inactive_participant_action': {
-        'task': 'wearware.fitbit_tasks.inactive_participant_action',
+        'task': 'WearWareRESTAPI.tasks.inactive_participant_action',
         'schedule': timedelta(days=1),
         'args': (),
     },
