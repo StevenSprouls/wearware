@@ -277,6 +277,11 @@ class ResearcherStudyAPIView(APIView):
         item.delete()
         return Response(status=204)
 
+    #returns only studies by the authenticated researcher
+    def get_queryset(self):
+        user = self.request.user
+        return ResearcherStudy.objects.filter(study_id, researcher_id)
+
 
 class ResearcherStudyAPIListView(APIView):
     serializer_class = ResearcherStudySerializer
@@ -294,6 +299,11 @@ class ResearcherStudyAPIListView(APIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    #returns only studies by the authenticated researcher 
+    def get_queryset(self):
+        user = self.request.user
+        return ResearcherStudy.objects.filter(study_id, researcher_id)
 
 
 class SleepDataAPIView(APIView):
