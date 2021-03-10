@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Home {% endblock title %} WearWare </title>
+    <title>{% block title %}Home {% endblock title %} WearWare: Data Wrangler </title>
   {% block head_meta %}
     {% block head_meta_charset %}
         <meta http-equiv="Content-Type"
@@ -35,13 +35,13 @@
               <div class="collapse navbar-collapse">
                   <ul class="nav navbar-nav navbar-right">
                           <a href="{% url 'WearWareRESTAPI:study' %}">Studies</a>
-                          <a href="{% url 'WearWareRESTAPI:activitylevel' %}">Activity Level</a>
-                          <a href="{% url 'WearWareRESTAPI:heartrate' %}">Heart Rates</a></li>
                           <a href="{% url 'WearWareRESTAPI:participant' %}">Participants</a>
-                          <a href="{% url 'WearWareRESTAPI:participantstudy' %}">Participant Studies</a>
-                          <a href="{% url 'WearWareRESTAPI:researcher' %}">Researchers</a>
-                          <a href="{% url 'WearWareRESTAPI:researcherstudy' %}">Researcher Studies</a>
-                          <a href="{% url 'WearWareRESTAPI:sleepdata' %}">Sleep Data</a>
+                          <a href="{% url 'WearWareRESTAPI:studyhasparticipant' %}">Participant's Studies</a>
+                          <a href="{% url 'WearWareRESTAPI:fitbitactivityrecord' %}">Activity Level</a>
+                          <a href="{% url 'WearWareRESTAPI:fitbitheartrecord' %}">Heart Rates</a></li>
+                          <a href="{% url 'WearWareRESTAPI:fitbitsleeprecord' %}">Sleep Records</a></li>
+                          <a href="{% url 'WearWareRESTAPI:syncrecord' %}">Record of syncs</a>
+                          <a href="{% url 'WearWareRESTAPI:researcherhasstudy' %}">Researcher's Studies</a>
                   </ul>
                     <style>
                       .topnav {
