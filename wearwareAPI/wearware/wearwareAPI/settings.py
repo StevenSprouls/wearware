@@ -128,6 +128,8 @@ DATABASES = {
     }
 }
 
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
