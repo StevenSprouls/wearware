@@ -44,7 +44,6 @@ class OAuth2Server:
         url, _ = self.fitbit.client.authorize_token_url()
         # Open the web browser in a new thread for command-line browser support
         threading.Timer(1, webbrowser.open, args=(url,)).start()
-
         # Same with redirect_uri hostname and port.
         urlparams = urlparse(self.redirect_uri)
         cherrypy.config.update({'server.socket_host': urlparams.hostname,
@@ -86,9 +85,9 @@ class OAuth2Server:
 
 ##Functions below generate urls for authorization and request headers.
 #taken from bitbucket wearware
-
+"""
     def fitbit_build_auth_url():
-        """Construct an authentication URL for a given subject."""
+        #Construct an authentication URL for a given subject.
         params = {
             'client_id': client_id,
             'response_type': 'code',
@@ -102,7 +101,7 @@ class OAuth2Server:
     print(fitbit_build_auth_url())
 
     def fitbit_build_request_headers():
-        """Construct shared request headers for fitbit requests."""
+        #Construct shared request headers for fitbit requests.
 
         #authenticate using client_secret and client_id
         fitbit_auth = client_id + ':' + client_secret
@@ -120,8 +119,8 @@ class OAuth2Server:
         #subscriber will have fitbit data
         #need sorting function as well as a function for posting data to database
         
-
-    """
+"""
+"""
     def fitbit_fetch_permanent_token(temp_token):
     #Use a temporary auth token to retrieve a reusable auth token from Fitbit.
     headers = fitbit_build_request_headers()
@@ -175,4 +174,4 @@ class OAuth2Server:
     refresh_sync.save()
 
     log.info('Successfully updated authentication info for fitbit %s.', device.identifier)
-    """
+"""
