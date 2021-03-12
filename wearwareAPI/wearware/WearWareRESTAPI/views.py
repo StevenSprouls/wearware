@@ -5,7 +5,6 @@ from WearWareRESTAPI.serializers import *
 from WearWareRESTAPI.models import *
 from django.shortcuts import render
 
-
 def index(request):
     return render(request, "index.html")
 
@@ -166,7 +165,7 @@ class FitbitSleepRecordAPIView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            item = FitbitSleepRecord.objects.get(pk=id)
+            item = FitbitSleepRecord.objects.filter(pk=id)
             serializer = FitbitSleepRecordSerializer(item)
             return Response(serializer.data)
         except FitbitSleepRecord.DoesNotExist:
@@ -310,6 +309,52 @@ class ResearcherHasStudyAPIListView(APIView):
 
     def post(self, request, format=None):
         serializer = ResearcherHasStudySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class FitbitAccountAPIView(APIView):
+    serializer_class = AccSerializer
+    def get(self, request, id, format=None):
+        try:
+            item = FitbitAccount.objects.get(pk=id)
+            serializer = AccSerializer(item)
+            return Response(serializer.data)
+        except FitbitAccount.DoesNotExist:
+            return Response(status=404)
+
+    def put(self, request, id, format=None):
+        try:
+            item = FitbitAccount.objects.get(pk=id)
+        except FitbitAccount.DoesNotExist:
+            return Response(status=404)
+        serializer = AccSerializer(item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, id, format=None):
+        try:
+            item = FitbitAccount.objects.get(pk=id)
+        except FitbitAccount.DoesNotExist:
+            return Response(status=404)
+        item.delete()
+        return Response(status=204)
+
+
+class FitbitAccountAPIListView(APIView):
+    serializer_class = AccSerializer
+    def get(self, request, format=None):
+        items = FitbitAccount.objects.order_by('pk')
+        paginator = PageNumberPagination()
+        result_page = paginator.paginate_queryset(items, request)
+        serializer = AccSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = AccSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)

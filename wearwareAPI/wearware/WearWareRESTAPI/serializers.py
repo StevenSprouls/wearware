@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from WearWareRESTAPI.models import *
 
+class AccSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = FitbitAccount
+        fields = '__all__'
+
 class StudySerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -11,7 +17,7 @@ class StudyHasParticipantSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = StudyHasParticipant
-        fields = ['study', 'participant']
+        fields = '__all__'
 
 class ResearcherHasStudySerializer(serializers.ModelSerializer):
     
@@ -24,7 +30,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ['pk', 'email', 'sex', 'gender']
+        fields = '__all__'
 
 class HeartRateRecordSerializer(serializers.ModelSerializer):
 
@@ -36,16 +42,16 @@ class MinuteRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FitbitMinuteRecord
-        fields = ['pk', 'timestamp', 'steps', 'calories', 'mets', 'activity_level', 'distance']
+        fields = '__all__'
 
 class SleepRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FitbitSleepRecord
-        exclude = ['device']
+        exclude = '__all__'
 
 class SyncRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SyncRecord
-        exclude = ['device']
+        exclude = '__all__'

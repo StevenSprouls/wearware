@@ -7,6 +7,9 @@ app_name= 'WearWareRESTAPI'
 urlpatterns = [
   path("", views.index, name="index"),
 
+  url(r'^fitbitaccount/(?P<id>[0-9]+)/$', views.FitbitAccountAPIView.as_view()),
+  url(r'^fitbitaccount/$', views.FitbitAccountAPIListView.as_view(), name='account'),
+
   url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
   url(r'^study/$', views.StudyAPIListView.as_view(), name='study'),
 
