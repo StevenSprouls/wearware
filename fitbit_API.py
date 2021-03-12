@@ -50,7 +50,8 @@ def create_new_fitbit_account():
 #application with permissions
 def make_fitbit_request(fitbitaccount):
     client = fitbit.Fitbit(client_id,client_secret,oauth2=True,
-                           fitbitaccount.access_token,fitbitaccount.refresh_token)
+                           access_toekn=fitbitaccount.access_token,
+                           refresh_token=fitbitaccount.refresh_token)
     return client.activity_stats()
 
 
