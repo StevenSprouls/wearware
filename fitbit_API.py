@@ -26,6 +26,9 @@ auth2_client=fitbit.Fitbit(client_id,client_secret,oauth2=True,
 #test date for getting 1 day of data from 02/23/2021
 #oneDate = datetime(year = 2021, month = 2, day = 28)
 
+
+#creates a fitbit account from models.py to be inserted in the database
+#gives access token and refresh token + a random indentifier and subject #
 def create_new_fitbit_account():  
     user_profile = auth2_client.user_profile_get()
     timezone = user_profile['user']['timezone']
@@ -48,6 +51,7 @@ def create_new_fitbit_account():
 
 #cannot currently get intraday activity due to inability to use winfree fitbit
 #application with permissions
+#currently returns a summary of an accounts activity statistics
 def make_fitbit_request(fitbitaccount):
     client = fitbit.Fitbit(client_id,client_secret,oauth2=True,
                            access_toekn=fitbitaccount.access_token,
