@@ -4,12 +4,17 @@ import sys
 import threading
 import traceback
 import webbrowser
-
-from urllib.parse import urlparse
+#import models.py
+from urllib.parse import urlsplit, urlencode, urlunsplit, urlparse
 from base64 import b64encode
 from fitbit.api import Fitbit
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
 
+
+client_id = '229VTC'
+client_secret = '789657eaf4ed81a6b8a2a7af831fbdc6'
+
+fitbit_auth_url = 'https://www.fitbit.com/oauth2/authorize' 
 
 class OAuth2Server:
     def __init__(self, client_id, client_secret,
@@ -38,7 +43,6 @@ class OAuth2Server:
         url, _ = self.fitbit.client.authorize_token_url()
         # Open the web browser in a new thread for command-line browser support
         threading.Timer(1, webbrowser.open, args=(url,)).start()
-
         # Same with redirect_uri hostname and port.
         urlparams = urlparse(self.redirect_uri)
         cherrypy.config.update({'server.socket_host': urlparams.hostname,
@@ -56,6 +60,12 @@ class OAuth2Server:
         if code:
             try:
                 self.fitbit.client.fetch_access_token(code)
+                #ACCESS_TOKEN=str(server.fitbit.client.session.token['access_token'])
+                #REFRESH_TOKEN=str(server.fitbit.client.session.token['refresh_token'])
+                #auth2client=fitbit.Fitbit(client_id,client_secret,oauth2=True,
+                #                          access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN)
+                #userProfile = auth2client.user_profile_get(self)
+                #print(userProfile)
             except MissingTokenError:
                 error = self._fmt_failure(
                     'Missing access token parameter.</br>Please check that '
@@ -78,20 +88,95 @@ class OAuth2Server:
         if cherrypy.engine.state == cherrypy.engine.states.STARTED:
             threading.Timer(1, cherrypy.engine.exit).start()
 
+##Functions below generate urls for authorization and request headers.
+#taken from bitbucket wearware
+"""
+    def fitbit_build_auth_url():
+        #Construct an authentication URL for a given subject.
+        params = {
+            'client_id': client_id,
+            'response_type': 'code',
+            'scope': 'activity heartrate location sleep profile',
+        }
+        url_parts = list(urlsplit(fitbit_auth_url))
+        url_parts[3] = urlencode(params)
+        auth_url = urlunsplit(url_parts)
+        return auth_url
 
-if __name__ == '__main__':
+    print(fitbit_build_auth_url())
 
-    if not (len(sys.argv) == 3):
-        print("Arguments: client_id and client_secret")
-        sys.exit(1)
+    def fitbit_build_request_headers():
+        #Construct shared request headers for fitbit requests.
 
-    server = OAuth2Server(*sys.argv[1:])
-    server.browser_authorize()
+        #authenticate using client_secret and client_id
+        fitbit_auth = client_id + ':' + client_secret
+        fitbit_auth = fitbit_auth.encode('utf8')
+        auth_header = 'Basic ' + base64.b64encode(fitbit_auth).decode('utf8')
 
-    profile = server.fitbit.user_profile_get()
-    print('You are authorized to access data for the user: {}'.format(
-        profile['user']['fullName']))
+        headers = {
+            'Authorization': auth_header,
+            'Accept-Locale': 'en_US',
+            'Accept-Language': 'en_US',
+        }
+        return headers
 
-    print('TOKEN\n=====\n')
-    for key, value in server.fitbit.client.session.token.items():
-        print('{} = {}'.format(key, value))
+    def request_fitbit_data(subscriber):
+        #subscriber will have fitbit data
+        #need sorting function as well as a function for posting data to database
+        
+"""
+"""
+    def fitbit_fetch_permanent_token(temp_token):
+    #Use a temporary auth token to retrieve a reusable auth token from Fitbit.
+    headers = fitbit_build_request_headers()
+
+    payload = {
+        'code': temp_token,
+        'grant_type': 'authorization_code',
+        'client_id': settings.FITBIT_CLIENT_ID
+    }
+
+    r = requests.post(fitbit_token_url, data=payload, headers=headers)
+    if not r.ok:
+        log.error('Unable to fetch permanent token (%s): %s', r.status_code, r.text)
+        r.raise_for_status()
+
+    auth_info = json.loads(r.text)
+    return auth_info"""
+
+
+"""def fitbit_refresh_access_token(device):
+    #Refresh an account's access token.
+    headers = fitbit_build_request_headers()
+
+    payload = {
+        'grant_type': 'refresh_token',
+        'refresh_token': device.refresh_token,
+    }
+
+    log.info('Requesting fresh auth token for device_id %s.', device.pk)
+    r = requests.post(fitbit_token_url, data=payload, headers=headers)
+
+    # if we get this far, the request succeeded and we did not email an admin
+    auth_info = json.loads(r.text)
+
+    # FIXME 
+    auth_info.pop('scope')
+    auth_info.pop('expires_in')
+    #sets a devices access tokens and refresh tokens. TAKEN FROM bitbucket wearware
+    #device.token_type = auth_info['token_type']
+    #device.access_token = auth_info['access_token']
+    #device.refresh_token = auth_info['refresh_token']
+    #device.is_active = True
+    #device.save()
+
+    refresh_sync = SyncRecord(device=device,
+                              start_time=timezone.now(),
+                              end_time=timezone.now(),
+                              sync_type='fitbit-token-refresh',
+                              successful=True,
+                              message='Succeeded refreshing token for device.')
+    refresh_sync.save()
+
+    log.info('Successfully updated authentication info for fitbit %s.', device.identifier)
+"""
