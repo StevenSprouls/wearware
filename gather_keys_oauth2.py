@@ -4,18 +4,17 @@ import sys
 import threading
 import traceback
 import webbrowser
-
+#import models.py
 from urllib.parse import urlsplit, urlencode, urlunsplit, urlparse
 from base64 import b64encode
 from fitbit.api import Fitbit
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
 
 
-client_id = '22C4KD'
-client_secret = 'd25cd8564b744d78b92b920e074bb555'
+client_id = '229VTC'
+client_secret = '789657eaf4ed81a6b8a2a7af831fbdc6'
 
-fitbit_auth_url = 'https://www.fitbit.com/oauth2/authorize'
-
+fitbit_auth_url = 'https://www.fitbit.com/oauth2/authorize' 
 
 class OAuth2Server:
     def __init__(self, client_id, client_secret,
@@ -61,6 +60,12 @@ class OAuth2Server:
         if code:
             try:
                 self.fitbit.client.fetch_access_token(code)
+                #ACCESS_TOKEN=str(server.fitbit.client.session.token['access_token'])
+                #REFRESH_TOKEN=str(server.fitbit.client.session.token['refresh_token'])
+                #auth2client=fitbit.Fitbit(client_id,client_secret,oauth2=True,
+                #                          access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN)
+                #userProfile = auth2client.user_profile_get(self)
+                #print(userProfile)
             except MissingTokenError:
                 error = self._fmt_failure(
                     'Missing access token parameter.</br>Please check that '

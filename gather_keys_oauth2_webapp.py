@@ -19,7 +19,7 @@ fitbit_auth_url = 'https://www.fitbit.com/oauth2/authorize'
 
 class OAuth2Server:
     def __init__(self, client_id, client_secret,
-                 redirect_uri='wearableinformatics.org'):
+                 redirect_uri='http://127.0.0.1:8080/'):
         """ Initialize the FitbitOauth2Client """
         self.success_html = """
             <h1>You are now authorized to access the Fitbit API!</h1>
@@ -42,15 +42,41 @@ class OAuth2Server:
         Open a browser to the authorization url and spool up a CherryPy
         server to accept the response
         """
-
+        #code = "c02fd24e34c2aa6c376514f91088f556f0e97229"
+        #self.fitbit.client.fetch_access_token(code)
         auth_url = fitbit_build_auth_url()
-        header = fitbit_build_request_headers()
-        r = requests.post(auth_url,header)
-        auth_info = json.loads(r.text)
-        #print(auth_info)
+        #header = fitbit_build_request_headers()
+        #print(auth_url)
+        r = requests.post(auth_url)
+        r1 = requests.get(auth_url)
+        print(r1)
+        print(json.loads(r1.text))
+        #print(auth_url)
         # Same with redirect_uri hostname and port.
         urlparams = urlparse(self.redirect_uri)
 
+    def index(self, state, code=None, error=None):
+        """
+        Receive a Fitbit response containing a verification code. Use the code
+        to fetch the access_token.
+        """
+        print("DOES THIS GET CALLED")
+        error = None
+        if code:
+            try:
+                self.fitbit.client.fetch_access_token(code)
+            except MissingTokenError:
+                error = self._fmt_failure(
+                    'Missing access token parameter.</br>Please check that '
+                    'you are using the correct client_secret')
+            except MismatchingStateError:
+                error = self._fmt_failure('CSRF Warning! Mismatching state')
+        else:
+            error = self._fmt_failure('Unknown error while authenticating')
+        # Use a thread to shutdown cherrypy so we can return HTML first
+        return error if error else self.success_html
+
+    
     ##Functions below generate urls for authorization and request headers.
     #taken from bitbucket wearware
 def fitbit_build_auth_url():
