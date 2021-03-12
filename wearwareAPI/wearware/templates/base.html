@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% if user.is_authenticated %}
     <title>{% block title %}Home {% endblock title %} WearWare: Data Wrangler </title>
   {% block head_meta %}
     {% block head_meta_charset %}
@@ -88,4 +89,7 @@
   </div>
 </body>
 {% endblock %}
+{% else %}
+  <a href="accounts/login">login here!</a>
+{% endif %}
 </html>
