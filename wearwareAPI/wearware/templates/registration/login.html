@@ -1,11 +1,12 @@
 
-{% block title %}WearWare LogIn{% endblock %}
+{% block title %}<h1>WearWare Login</h1>{% endblock %}
 
 {% block content %}
-  <h2>Login</h2>
+  <h3>Enter your username and password below</h3>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Login</button>
   </form>
+  <p><button><a href="{% url 'password_reset' %}" style="text-decoration: none">Reset Password</a></button></p>
 {% endblock %}

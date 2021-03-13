@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_generators',
     'wearwareAPI',
+    'bootstrap3',
 ]
 
 REST_FRAMEWORK = {
