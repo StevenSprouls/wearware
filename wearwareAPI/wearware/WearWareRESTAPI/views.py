@@ -520,3 +520,34 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         def get_queryset(self):
             user = self.request.user
             return ParticipantData.objects.filter()
+
+class FitbitAccountFilter(filters.FilterSet):
+        class Meta:
+            model = FitbitAccount
+            fields = ['identifier', 'subject', 'is_active']
+
+class FitbitAccountAPIListView(generics.ListCreateAPIView):
+    serializer_class = AccSerializer
+    queryset = FitbitAccount.objects.all()
+    #Filter for Researcher Study
+    filter_backends = [filters.DjangoFilterBackend,]
+    filter_class = FitbitAccountFilter
+
+    #Return only fitbitt account record from user
+    def get_queryset(self):
+        user = self.request.user
+        return FitbitAccount.objects.filter()
+
+    def get(self, request, format=None):
+        items = FitbitAccount.objects.order_by('pk')
+        paginator = PageNumberPagination()
+        result_page = paginator.paginate_queryset(items, request)
+        serializer = AccSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = AccSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

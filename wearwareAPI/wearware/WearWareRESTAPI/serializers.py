@@ -19,11 +19,16 @@ class StudySerializer(serializers.ModelSerializer):
     def get_end_date(self,obj):
         return obj.end_date
 
+class AccSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FitbitAccount
+        fields = '__all__'
+
 class StudyHasParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StudyHasParticipant
-        fields = ['study', 'participant']
+        fields = '__all__'
 
 class ResearcherHasStudySerializer(serializers.ModelSerializer):
 
@@ -36,7 +41,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ['pk','first_name','last_name','email', 'sex', 'gender', 'active']
+        fields = '__all__'
 
 class HeartRateRecordSerializer(serializers.ModelSerializer):
 
@@ -48,19 +53,19 @@ class MinuteRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FitbitMinuteRecord
-        fields = ['pk', 'timestamp', 'steps', 'calories', 'mets', 'activity_level', 'distance']
+        fields = '__all__'
 
 class SleepRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FitbitSleepRecord
-        exclude = ['device']
+        fields = '__all__'
 
 class SyncRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SyncRecord
-        exclude = ['device']
+        fields = '__all__'
 
 #Serializer for all of the participant data so it can more easily be sorted
 class ParticipantDataSerializer(serializers.ModelSerializer):
