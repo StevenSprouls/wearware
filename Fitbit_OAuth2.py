@@ -5,12 +5,16 @@ from urllib.parse import urlsplit, urlencode, urlunsplit, urlparse
 import os
 import sys
 import json
+import sqlalchemy
+from sqlalchemy import create_engine, insert
+import psycopg2
 
 client_id = '22C4KD'
 client_secret = 'd25cd8564b744d78b92b920e074bb555'
 fitbit_auth_url = 'https://www.fitbit.com/oauth2/authorize'
 fitbit_auth_token = 'https://api.fitbit.com/oauth2/token'
-
+DATABASE_URI = 'postgresql://wearware:databit!@wearware.cqr2btyia7sd.us-west-1.rds.amazonaws.com:5432/wearware'
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = "1"
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
@@ -29,6 +33,20 @@ def callback():
     token = fitbit.fetch_token(fitbit_auth_token, client_secret=client_secret,
                                authorization_response=request.url)
     session['oauth_token'] = token
+    fitbit = OAuth2Session(client_id, token=session['oauth_token'])
+    response = fitbit.get('https://api.fitbit.com/1/user/-/profile.json')
+    response = json.loads(response.text)
+    user_timezone = response['user']['timezone']
+
+    
+    #connecting to our database and setting access_token + refresh_token
+    #plus basic user profile information
+    engine = create_engine(DATABASE_URI)
+    sql_command = 'INSERT INTO public.\"WearWareRESTAPI_fitbitaccount\" VALUES (DEFAULT,9998887,True,\''+user_timezone+'\',\'auth_token\',\''+str(session['oauth_token']['refresh_token'])+'\',\''+str(session['oauth_token']['refresh_token'])+'\','+str(859)+')'
+                   
+    engine.execute(sql_command)
+    
+
     return redirect(url_for('.activity'))
 
 #
