@@ -51,14 +51,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = "wearware.test@gmail.com"
-EMAIL_HOST_PASSWORD = "Nu77P@$s"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-SERVER_EMAIL = 'wearware.test@gmail.com'
-DEFAULT_FROM_EMAIL = SERVER_EMAIL
+EMAIL_HOST_USER = 'sms968@nau.edu' #just using my nau email for testing. dont fucking log into my email lol.
+EMAIL_HOST_PASSWORD = 'Bagge512'
 
 ADMINS = (('Kyle Winfree', 'kyle.winfree@nau.edu'),)
 MANAGERS = ADMINS
@@ -76,11 +74,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_generators',
     'wearwareAPI',
+    'bootstrap3',
+    'django_filters',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 15
+    'PAGE_SIZE': 15,
+    'DEFAULT_FILTER_BACKENDS' : ['django_filters.rest_framework.DjangoFilterBackend',]
 }
 
 MIDDLEWARE = [
@@ -93,6 +94,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGIN_REDIRECT_URL = 'index'
 ROOT_URLCONF = 'wearwareAPI.urls'
 
 TEMPLATES = [
@@ -127,6 +129,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 
 # Password validation

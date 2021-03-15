@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% if user.is_authenticated %}
     <title>{% block title %}Home {% endblock title %} WearWare: Data Wrangler </title>
   {% block head_meta %}
     {% block head_meta_charset %}
@@ -36,10 +37,12 @@
                   <ul class="nav navbar-nav navbar-right">
                           <a href="{% url 'WearWareRESTAPI:study' %}">Studies</a>
                           <a href="{% url 'WearWareRESTAPI:participant' %}">Participants</a>
+                          <a href="{% url 'WearWareRESTAPI:account' %}">Accounts</a>
                           <a href="{% url 'WearWareRESTAPI:studyhasparticipant' %}">Participant's Studies</a>
                           <a href="{% url 'WearWareRESTAPI:fitbitactivityrecord' %}">Activity Level</a>
                           <a href="{% url 'WearWareRESTAPI:fitbitheartrecord' %}">Heart Rates</a></li>
                           <a href="{% url 'WearWareRESTAPI:fitbitsleeprecord' %}">Sleep Records</a></li>
+                          <a href="{% url 'WearWareRESTAPI:participantdata' %}">Participant Data</a>
                           <a href="{% url 'WearWareRESTAPI:syncrecord' %}">Record of syncs</a>
                           <a href="{% url 'WearWareRESTAPI:researcherhasstudy' %}">Researcher's Studies</a>
                   </ul>
@@ -87,4 +90,9 @@
   </div>
 </body>
 {% endblock %}
+{% else %}
+  <p>It looks like you have been logged out of the WearWare system....</p>
+  <p>Click here to log back in!</p>
+  <a href="accounts/login">WearWare</a>
+{% endif %}
 </html>

@@ -6,6 +6,8 @@ from django.contrib.auth import admin
 from django.db import models
 from datetime import timedelta
 from django.utils.timezone import now
+import django_filters
+from django_filters import rest_framework as filters
 
 
 class Study(models.Model):
@@ -67,9 +69,10 @@ class FitbitMinuteRecord(models.Model):
 
 class FitbitHeartRecord(models.Model):
     #a single heart rate record owned by a minute record...owned by the minute record rather than the participant as this is where the timestamp is located
-    device = models.ForeignKey(FitbitMinuteRecord, db_index=True, on_delete=models.PROTECT)
+    device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     second = models.IntegerField()
     bpm = models.IntegerField()
+    timestamp = models.DateTimeField()
 
 class FitbitSleepRecord(models.Model):
     #a single sleep record related to a fitbit account
@@ -116,8 +119,13 @@ class ResearcherHasStudy(models.Model):
     def __str__(self):
         return self.researcher.email
 
+class ParticipantData(models.Model):
+    objects = FitbitHeartRecord(), FitbitMinuteRecord(), FitbitSleepRecord()
+    device = models.ManyToManyField(FitbitHeartRecord, related_name='+')
+    steps = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    calories = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    mets = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')
 
-#for the researcher model, first a user needs to be created by typing "python manage.py shell" and
-# then from django.contrib.auth.models import User
-# then User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
-# delete a user with User.objects.get(username="john").delete()
