@@ -1,33 +1,35 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from WearWareRESTAPI.serializers import ActivityLevelSerializer, HeartRateSerializer, ParticipantSerializer, ParticipantStudySerializer, ResearcherSerializer, ResearcherStudySerializer, SleepDataSerializer, StudySerializer
-from WearWareRESTAPI.models import ActivityLevel, HeartRate, Participant, ParticipantStudy, Researcher, ResearcherStudy, SleepData, Study
+from WearWareRESTAPI.serializers import *
+from WearWareRESTAPI.models import *
 from django.shortcuts import render
 from rest_framework import generics
 import django_filters
 from django_filters import rest_framework as filters
 from django_filters.views import FilterView
 
+
+
 def index(request):
     return render(request, "index.html")
 
-class ActivityLevelAPIView(APIView):
-
+class StudyAPIView(APIView):
+    serializer_class = StudySerializer
     def get(self, request, id, format=None):
         try:
-            item = ActivityLevel.objects.filter(pk=id)
-            serializer = ActivityLevelSerializer(item, many=True)
+            item = Study.objects.filter(pk=id)
+            serializer = StudySerializer(item,many=True)
             return Response(serializer.data)
-        except ActivityLevel.DoesNotExist:
+        except Study.DoesNotExist:
             return Response(status=404)
 
     def put(self, request, id, format=None):
         try:
-            item = ActivityLevel.objects.get(pk=id)
-        except ActivityLevel.DoesNotExist:
+            item = Study.objects.get(pk=id)
+        except Study.DoesNotExist:
             return Response(status=404)
-        serializer = ActivityLevelSerializer(item, data=request.data)
+        serializer = StudySerializer(item, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -35,8 +37,8 @@ class ActivityLevelAPIView(APIView):
 
     def delete(self, request, id, format=None):
         try:
-            item = ActivityLevel.objects.get(pk=id)
-        except ActivityLevel.DoesNotExist:
+            item = Study.objects.get(pk=id)
+        except Study.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -61,36 +63,37 @@ class StudyAPIListView(APIView):
         return Study.objects.filter()
 
     def get(self, request, format=None):
-        items = ActivityLevel.objects.order_by('pk')
+        items = Study.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = ActivityLevelSerializer(result_page, many=True)
+        serializer = StudySerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = ActivityLevelSerializer(data=request.data)
+        serializer = StudySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
 
-class HeartRateAPIView(APIView):
+class ParticipantAPIView(APIView):
+    serializer_class = ParticipantSerializer
 
     def get(self, request, id, format=None):
         try:
-            item = HeartRate.objects.filter(pk=id)
-            serializer = HeartRateSerializer(item, many=True)
+            item = Participant.objects.get(pk=id)
+            serializer = ParticipantSerializer(item)
             return Response(serializer.data)
-        except HeartRate.DoesNotExist:
+        except Participant.DoesNotExist:
             return Response(status=404)
 
     def put(self, request, id, format=None):
         try:
-            item = HeartRate.objects.get(pk=id)
-        except HeartRate.DoesNotExist:
+            item = Participant.objects.get(pk=id)
+        except Participant.DoesNotExist:
             return Response(status=404)
-        serializer = HeartRateSerializer(item, data=request.data)
+        serializer = ParticipantSerializer(item, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -98,8 +101,8 @@ class HeartRateAPIView(APIView):
 
     def delete(self, request, id, format=None):
         try:
-            item = HeartRate.objects.get(pk=id)
-        except HeartRate.DoesNotExist:
+            item = Participant.objects.get(pk=id)
+        except Participant.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -131,45 +134,34 @@ class ParticipantAPIListView(APIView):
         return Participant.objects.filter()
 
     def get(self, request, format=None):
-        items = HeartRate.objects.order_by('pk')
+        items = Participant.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = HeartRateSerializer(result_page, many=True)
+        serializer = ParticipantSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = HeartRateSerializer(data=request.data)
+        serializer = ParticipantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-
-class ParticipantAPIView(APIView):
+class FitbitMinuteRecordAPIView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            item = Participant.objects.get(pk=id)
-            serializer = ParticipantSerializer(item)
+            item = FitbitMinuteRecord.objects.filter(pk=id)
+            serializer = MinuteRecordSerializer(item, many=True)
             return Response(serializer.data)
-        except Participant.DoesNotExist:
+        except FitbitMinuteRecord.DoesNotExist:
             return Response(status=404)
 
-    def put(self, request, id, format=None):
-        try:
-            item = Participant.objects.get(pk=id)
-        except Participant.DoesNotExist:
-            return Response(status=404)
-        serializer = ParticipantSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
-            item = Participant.objects.get(pk=id)
-        except Participant.DoesNotExist:
+            item = FitbitMinuteRecord.objects.get(pk=id)
+        except FitbitMinuteRecord.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -193,49 +185,31 @@ class FitbitMinuteRecordAPIListView(APIView):
         return FitbitMinuteRecord.objects.filter()
 
     def get(self, request, format=None):
-        items = Participant.objects.order_by('pk')
+        items = FitbitMinuteRecord.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = ParticipantSerializer(result_page, many=True)
+        serializer = MinuteRecordSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = ParticipantSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
 
-
-class ParticipantStudyAPIView(APIView):
+class FitbitHeartRecordAPIView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            item = ParticipantStudy.objects.get(pk=id)
-            serializer = ParticipantStudySerializer(item)
+            item = FitbitHeartRecord.objects.filter(pk=id)
+            serializer = HeartRateRecordSerializer(item, many=True)
             return Response(serializer.data)
-        except ParticipantStudy.DoesNotExist:
+        except FitbitHeartRecord.DoesNotExist:
             return Response(status=404)
-
-    def put(self, request, id, format=None):
-        try:
-            item = ParticipantStudy.objects.get(pk=id)
-        except ParticipantStudy.DoesNotExist:
-            return Response(status=404)
-        serializer = ParticipantStudySerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
-            item = ParticipantStudy.objects.get(pk=id)
-        except ParticipantStudy.DoesNotExist:
+            item = FitbitHeartRecord.objects.get(pk=id)
+        except FitbitHeartRecord.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
-
+    
 class FitbitHeartRecordFilter(filters.FilterSet):
     class Meta:
         model = FitbitHeartRecord
@@ -256,45 +230,27 @@ class FitbitHeartRecordAPIListView(APIView):
         return FitbitHeartRecord.objects.filter()
 
     def get(self, request, format=None):
-        items = ParticipantStudy.objects.order_by('pk')
+        items = FitbitHeartRecord.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = ParticipantStudySerializer(result_page, many=True)
+        serializer = HeartRateRecordSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = ParticipantStudySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
 
-
-class ResearcherAPIView(APIView):
+class FitbitSleepRecordAPIView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            item = Researcher.objects.get(pk=id)
-            serializer = ResearcherSerializer(item)
+            item = FitbitSleepRecord.objects.filter(pk=id)
+            serializer = FitbitSleepRecordSerializer(item)
             return Response(serializer.data)
-        except Researcher.DoesNotExist:
+        except FitbitSleepRecord.DoesNotExist:
             return Response(status=404)
-
-    def put(self, request, id, format=None):
-        try:
-            item = Researcher.objects.get(pk=id)
-        except Researcher.DoesNotExist:
-            return Response(status=404)
-        serializer = ResearcherSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
-            item = Researcher.objects.get(pk=id)
-        except Researcher.DoesNotExist:
+            item = FitbitSleepRecord.objects.get(pk=id)
+        except FitbitSleepRecord.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -319,45 +275,27 @@ class FitbitSleepRecordAPIListView(APIView):
         return FitbitHeartRecord.objects.filter()
 
     def get(self, request, format=None):
-        items = Researcher.objects.order_by('pk')
+        items = FitbitSleepRecord.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = ResearcherSerializer(result_page, many=True)
+        serializer = SleepRecordSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = ResearcherSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
 
-
-class ResearcherStudyAPIView(APIView):
+class SyncRecordAPIView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            item = ResearcherStudy.objects.get(pk=id)
-            serializer = ResearcherStudySerializer(item)
+            item = SyncRecord.objects.get(pk=id)
+            serializer = SyncRecordSerializer(item)
             return Response(serializer.data)
-        except ResearcherStudy.DoesNotExist:
+        except SyncRecord.DoesNotExist:
             return Response(status=404)
-
-    def put(self, request, id, format=None):
-        try:
-            item = ResearcherStudy.objects.get(pk=id)
-        except ResearcherStudy.DoesNotExist:
-            return Response(status=404)
-        serializer = ResearcherStudySerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
 
     def delete(self, request, id, format=None):
         try:
-            item = ResearcherStudy.objects.get(pk=id)
-        except ResearcherStudy.DoesNotExist:
+            item = SyncRecord.objects.get(pk=id)
+        except SyncRecord.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -382,41 +320,29 @@ class SyncRecordAPIListView(APIView):
         return SyncRecord.objects.filter()
 
     def get(self, request, format=None):
-        items = ResearcherStudy.objects.order_by('pk')
+        items = SyncRecord.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = ResearcherStudySerializer(result_page, many=True)
+        serializer = SyncRecordSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = ResearcherStudySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-    #returns only studies by the authenticated researcher
-    def get_queryset(self):
-        user = self.request.user
-        return ResearcherStudy.objects.filter(study_id, researcher_id)
-
-
-class SleepDataAPIView(APIView):
+class StudyHasParticipantAPIView(APIView):
+    serializer_class = StudyHasParticipantSerializer
 
     def get(self, request, id, format=None):
         try:
-            item = SleepData.objects.get(pk=id)
-            serializer = SleepDataSerializer(item)
+            item = StudyHasParticipant.objects.get(pk=id)
+            serializer = StudyHasParticipantSerializer(item)
             return Response(serializer.data)
-        except SleepData.DoesNotExist:
+        except StudyHasParticipant.DoesNotExist:
             return Response(status=404)
 
     def put(self, request, id, format=None):
         try:
-            item = SleepData.objects.get(pk=id)
-        except SleepData.DoesNotExist:
+            item = StudyHasParticipant.objects.get(pk=id)
+        except StudyHasParticipant.DoesNotExist:
             return Response(status=404)
-        serializer = SleepDataSerializer(item, data=request.data)
+        serializer = StudyHasParticipantSerializer(item, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -424,8 +350,8 @@ class SleepDataAPIView(APIView):
 
     def delete(self, request, id, format=None):
         try:
-            item = SleepData.objects.get(pk=id)
-        except SleepData.DoesNotExist:
+            item = StudyHasParticipant.objects.get(pk=id)
+        except StudyHasParticipant.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -450,36 +376,37 @@ class StudyHasParticipantAPIListView(APIView):
         return StudyHasParticipant.objects.filter()
 
     def get(self, request, format=None):
-        items = SleepData.objects.order_by('pk')
+        items = StudyHasParticipant.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = SleepDataSerializer(result_page, many=True)
+        serializer = StudyHasParticipantSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = SleepDataSerializer(data=request.data)
+        serializer = StudyHasParticipantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
 
-class StudyAPIView(APIView):
+class ResearcherHasStudyAPIView(APIView):
+    serializer_class = ResearcherHasStudySerializer
 
     def get(self, request, id, format=None):
         try:
-            item = Study.objects.filter(pk=id)
-            serializer = StudySerializer(item, many=True)
+            item = ResearcherHasStudy.objects.get(pk=id)
+            serializer = ResearcherHasStudySerializer(item)
             return Response(serializer.data)
-        except Study.DoesNotExist:
+        except ResearcherHasStudy.DoesNotExist:
             return Response(status=404)
 
     def put(self, request, id, format=None):
         try:
-            item = Study.objects.get(pk=id)
-        except Study.DoesNotExist:
+            item = ResearcherHasStudy.objects.get(pk=id)
+        except ResearcherHasStudy.DoesNotExist:
             return Response(status=404)
-        serializer = StudySerializer(item, data=request.data)
+        serializer = ResearcherHasStudySerializer(item, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -487,8 +414,8 @@ class StudyAPIView(APIView):
 
     def delete(self, request, id, format=None):
         try:
-            item = Study.objects.get(pk=id)
-        except Study.DoesNotExist:
+            item = ResearcherHasStudy.objects.get(pk=id)
+        except ResearcherHasStudy.DoesNotExist:
             return Response(status=404)
         item.delete()
         return Response(status=204)
@@ -513,14 +440,14 @@ class ResearcherHasStudyAPIListView(APIView):
         return ResearcherHasStudy.objects.filter()
 
     def get(self, request, format=None):
-        items = Study.objects.order_by('pk')
+        items = ResearcherHasStudy.objects.order_by('pk')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
-        serializer = StudySerializer(result_page, many=True)
+        serializer = ResearcherHasStudySerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = StudySerializer(data=request.data)
+        serializer = ResearcherHasStudySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
@@ -647,3 +574,4 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         def get_queryset(self):
             user = self.request.user
             return ParticipantData.objects.filter()
+
