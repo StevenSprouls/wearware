@@ -272,7 +272,7 @@ class FitbitSleepRecordAPIListView(generics.ListCreateAPIView):
     #Return only sleep record in a study from a user
     def get_queryset(self):
         user = self.request.user
-        return FitbitHeartRecord.objects.filter()
+        return FitbitSleepRecord.objects.filter()
 
     def get(self, request, format=None):
         items = FitbitSleepRecord.objects.order_by('pk')
@@ -309,7 +309,7 @@ class SyncRecordFilter(filters.FilterSet):
 class SyncRecordAPIListView(generics.ListCreateAPIView):
     serializer_class = SyncRecordSerializer
     queryset = SyncRecord.objects.all()
-    #Filter for Sleep Record
+    #Filter for sync Record
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
     filter_class = SyncRecordFilter
     ordering_fields = ['device', 'timestamp', 'sync_type', 'successful']
@@ -560,11 +560,11 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         filter_class = ParticipantDataFilter
 
         def get(self, request, format=None):
-            item = Participant.objects.get(first_name=first_name)
+            item = Participant.objects.get(first_name='first_name')
             device = FitbitAccount.objects.get(subject=item)
 
             minute_records = FitbitMinuteRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
-            heart_records = FitbitHeartRecord.objects.filter(minute_record__in=minute_records)
+            heart_records = FitbitHeartRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
             sleep_records = FitbitSleepRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
             data = {
                 'minute_records': minute_records,

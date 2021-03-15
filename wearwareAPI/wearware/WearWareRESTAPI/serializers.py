@@ -60,13 +60,13 @@ class SleepRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FitbitSleepRecord
-        exclude = '__all__'
+        fields = '__all__'
 
 class SyncRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SyncRecord
-        exclude = '__all__'
+        fields = '__all__'
 
 #Serializer for all of the participant data so it can more easily be sorted
 class ParticipantDataSerializer(serializers.ModelSerializer):
