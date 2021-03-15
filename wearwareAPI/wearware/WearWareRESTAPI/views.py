@@ -560,12 +560,12 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         filter_class = ParticipantDataFilter
 
         def get(self, request, format=None):
-            item = Participant.objects.get(first_name='first_name')
+            item = Participant.objects.get(first_name="fn_101")
             device = FitbitAccount.objects.get(subject=item)
 
-            minute_records = FitbitMinuteRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
-            heart_records = FitbitHeartRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
-            sleep_records = FitbitSleepRecord.objects.filter(device=device, timestamp__gte=start_date, timestamp__lte=end_date)
+            minute_records = FitbitMinuteRecord.objects.filter()
+            heart_records = FitbitHeartRecord.objects.filter()
+            sleep_records = FitbitSleepRecord.objects.filter()
             data = {
                 'minute_records': minute_records,
                 'heart_records': heart_records,
@@ -577,13 +577,6 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
             result_page = paginator.paginate_queryset(items, request)
             serializer = ParticipantDataSerializer(result_page, many=True)
             return paginator.get_paginated_response(serializer.data)
-
-        def post(self, request, format=None):
-            serializer = ParticipantDataSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=201)
-            return Response(serializer.errors, status=400)
 
         #Return only Researcher study record in a study from a user
         def get_queryset(self):
