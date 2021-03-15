@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'wearwareAPI',
     'bootstrap3',
     'django_filters',
+    'drf_api_logger',
 ]
 
 REST_FRAMEWORK = {
@@ -92,7 +93,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
+
+DRF_API_LOGGER_DATABASE = True # Default to False
 
 LOGIN_REDIRECT_URL = 'index'
 ROOT_URLCONF = 'wearwareAPI.urls'
