@@ -6,6 +6,9 @@ from django.contrib.auth import admin
 from django.db import models
 from datetime import timedelta
 from django.utils.timezone import now
+import django_filters
+from django_filters import rest_framework as filters
+
 
 
 class Study(models.Model):
@@ -26,6 +29,7 @@ class Study(models.Model):
             ('add_subject_to_study', 'Create a new subject and add to study.'),
         )
 
+
 class Participant(models.Model):
     #subject in a study, owns a fitbit account
     first_name = models.CharField(max_length=25)
@@ -39,7 +43,7 @@ class Participant(models.Model):
     def __str__(self):
         return self.email
 
-class FitbitAccount(models.Model): 
+class FitbitAccount(models.Model):
     #fitbit acc owned by subject
     identifier = models.CharField(max_length=10, db_index=True)
     subject = models.ForeignKey(Participant, db_index=True, on_delete=models.PROTECT)
@@ -116,7 +120,15 @@ class ResearcherHasStudy(models.Model):
     def __str__(self):
         return self.researcher.email
 
-
+class ParticipantData(models.Model):
+    objects = FitbitHeartRecord(), FitbitMinuteRecord(), FitbitSleepRecord()
+    device = models.ManyToManyField(FitbitHeartRecord, related_name='+')
+    steps = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    calories = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    mets = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
+    bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')
 #for the researcher model, first a user needs to be created by typing "python manage.py shell" and
 # then from django.contrib.auth.models import User
 # then User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')

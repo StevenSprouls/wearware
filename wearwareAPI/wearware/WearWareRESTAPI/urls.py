@@ -1,6 +1,10 @@
 from django.conf.urls import include, url
 from WearWareRESTAPI import views
+from WearWareRESTAPI.views import ParticipantFilter
+from WearWareRESTAPI.models import Participant
 from django.urls import path
+from django_filters.views import FilterView
+from django_filters.views import object_filter
 
 
 app_name= 'WearWareRESTAPI'
@@ -12,6 +16,7 @@ urlpatterns = [
 
   url(r'^participant/(?P<id>[0-9]+)/$', views.ParticipantAPIView.as_view()),
   url(r'^participant/$', views.ParticipantAPIListView.as_view(), name='participant'),
+  url(r'^participant/$', FilterView.as_view(filterset_class=ParticipantFilter)),
 
   url(r'^fitbitminuterecord/(?P<id>[0-9]+)/$', views.FitbitMinuteRecordAPIView.as_view()),
   url(r'^fitbitminuterecord/$', views.FitbitMinuteRecordAPIListView.as_view(),name='fitbitactivityrecord'),
@@ -31,4 +36,6 @@ urlpatterns = [
   url(r'^researcherhasstudy/(?P<id>[0-9]+)/$', views.ResearcherHasStudyAPIView.as_view()),
   url(r'^researcherhasstudy/$', views.ResearcherHasStudyAPIListView.as_view(),name='researcherhasstudy'),
 
+  url(r'^participantdata/(?P<id>[0-9]+)/$', views.ParticipantDataAPIView.as_view()),
+  url(r'^participantdata/$', views.ParticipantDataAPIListView.as_view(),name='participantdata'),
 ]
