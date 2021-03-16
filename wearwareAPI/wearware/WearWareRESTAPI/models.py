@@ -119,13 +119,4 @@ class ResearcherHasStudy(models.Model):
     def __str__(self):
         return self.researcher.email
 
-class ParticipantData(models.Model):
-    objects = FitbitHeartRecord(), FitbitMinuteRecord(), FitbitSleepRecord()
-    device = models.ManyToManyField(FitbitHeartRecord, related_name='+')
-    steps = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    calories = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    mets = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')
 

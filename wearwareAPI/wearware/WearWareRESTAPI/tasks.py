@@ -1,33 +1,49 @@
-import sys
-import datetime
-import requests
 from __future__ import absolute_import
+
 from celery import shared_task
-from django.utils import timezone
-from pytz import timezone as pytz_tz
-from django.core.mail import send_mail, mail_managers
-from django.db import transaction
+
+from .fitbit import *
+from .models import *
+
+import os
+import csv
+import codecs
+import base64
+import datetime
+import json
+import logging
+import time
 import dateutil.parser
 from urllib.parse import urlsplit, urlencode, urlunsplit
-from wearware.fitbit import * # -- this is what jensen is working on 
-from WearWareRESTAPI.models import *
-
+import requests
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+from django.core.mail import mail_managers, send_mail
+from django.db import transaction
+from django.template import loader, Context
+from django.utils import timezone
+from pytz import timezone as pytz_tz
+from djqscsv import write_csv
+from background_task import background
+from .models import FitbitAccount, SyncRecord, FitbitMinuteRecord, FitbitHeartRecord
+from .fitbit import fitbit_build_request_headers
+import sys
 
 @shared_task
 @transaction.atomic
 def fitbit_refresh_tokens():
-    #Scheduled task to refresh Fitbit authentication tokens.
+    """Scheduled task to refresh Fitbit authentication tokens."""
     for device in FitbitAccount.objects.select_for_update().filter(is_active=True):
         fitbit_refresh_access_token(device)
-
 
 @shared_task
 @transaction.atomic
 def fitbit_update_activity_data(owner_id):
-    #Fetch up to date activity data for a given Fitbit account.
+    """Fetch up to date activity data for a given Fitbit account."""
     try:
         # very important that this select_for_update happens in a @transaction.atomic
-        # to prevent multiple notifications running in sync and clobbering a user's records
+        # to prevent multiple notifications running in sync
         device = FitbitAccount.objects.select_for_update().get(identifier=owner_id)
 
         if not device.is_active:
@@ -79,7 +95,7 @@ def fitbit_update_activity_data(owner_id):
         device.save()
 
 def inactive_participant_action():
-    #Check for inactive participants and send out a notification
+    """Check for inactive participants and send out a notification"""
     inactive_participants = []
     message = "We noticed inactivity from your fitbit device. Please being wearing your fitbit again " \
                "or contact your study administrator if there is an issue with your device. Thank you."
@@ -99,13 +115,48 @@ def inactive_participant_action():
 def emailpeople(message, emails):
     subject = "WearWare Study Message"
     body = """You have received a message from a researcher from WearWare!
-            The message is as follows: {message}""".format(message=message)
-    send_from = "wearware.test@gmail.com"
-    log.info("Begin sending email(s) with message '%s' to %s", message, emails)
+
+The message is as follows: {message}""".format(message=message)
+    send_from = "sms968@nau.edu" #again, dont fuck with my email
+    log.info("Begin sending email(s) with message '%s' to %s",
+             message, emails)
+
     send_mail(
         subject,
         body,
         send_from,
         emails
     )
+
     log.info("Finished sending email(s)")
+
+@background(schedule=1)
+def emailParticipant(emails, study_id, welcome_message, fitbit_link):
+    study = Study.objects.get(pk=study_id)
+    subject = "WearWare Study Invitation"
+    send_from = "sms968@nau.edu"
+
+    body = """You have been invited to participate in a study on WearWare!
+
+    This study is entitled: {study_name}
+    This study runs from {study_start} to {study_end}
+
+    Here is a message from they study owner:
+
+    {message}
+
+    Please follow this link to allow us access to your Fitbit data: {link}
+    """.format(
+        study_name=study.name,
+        study_start=study.start_date,
+        study_end=study.end_date,
+        message=welcome_message,
+        link=fitbit_link)
+
+    send_mail(
+        subject,
+        body,
+        send_from,
+        emails
+        )
+

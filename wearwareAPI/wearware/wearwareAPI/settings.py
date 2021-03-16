@@ -64,19 +64,25 @@ MANAGERS = ADMINS
 # Application definition
 
 INSTALLED_APPS = [
+    INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
-    'WearWareRESTAPI',
-    'rest_framework',
-    'drf_generators',
-    'wearwareAPI',
+    'django_extensions',
+    'registration',
     'bootstrap3',
-    'django_filters',
-    'drf_api_logger',
+    'bootstrap_datepicker_plus',
+    'django_bootstrap_breadcrumbs',
+    'guardian',
+    'rest_framework',
+    'background_task',
+    'WearWareRESTAPI',
+)
+
 ]
 
 REST_FRAMEWORK = {
