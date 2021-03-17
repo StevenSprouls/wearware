@@ -11,6 +11,7 @@ from django_filters.views import FilterView
 
 
 
+
 def index(request):
     return render(request, "index.html")
 
