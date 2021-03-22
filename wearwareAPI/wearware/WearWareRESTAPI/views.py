@@ -16,9 +16,18 @@ from rest_framework.renderers import AdminRenderer
 def index(request):
     return render(request, "index.html")
 
+class StudyFilter(filters.FilterSet):
+    #start_date = filters.DateFilter()
+    class Meta:
+        model = Study
+        fields = ['name', 'active', 'start_date', 'end_date']
 
 class StudyAPIView(APIView):
     serializer_class = StudySerializer
+    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter]
+    renderer_classes = [AdminRenderer]
+    filter_class = StudyFilter
+
     def get(self, request, id, format=None):
         try:
             item = Study.objects.filter(pk=id)
@@ -45,12 +54,6 @@ class StudyAPIView(APIView):
             return Response(status=404)
         item.delete()
         return Response(status=204)
-
-class StudyFilter(filters.FilterSet):
-    #start_date = filters.DateFilter()
-    class Meta:
-        model = Study
-        fields = ['name', 'active', 'start_date', 'end_date']
 
 class StudyAPIListView(generics.ListCreateAPIView):
     startT = time.time()
@@ -85,8 +88,25 @@ class StudyAPIListView(generics.ListCreateAPIView):
         return Response(serializer.errors, status=400)
 
 
+#Participant Filter
+class ParticipantFilter(django_filters.FilterSet):
+    first_name = django_filters.CharFilter(lookup_expr='iexact')
+    class Meta:
+        model = Participant
+        fields = ['first_name', 'last_name', 'email', 'sex', 'active']
+
+class ParticipantList(FilterView):
+    model = Participant
+    paginate_by = 20
+    filterset_class = ParticipantFilter
+    strict = False
+
+
 class ParticipantAPIView(APIView):
     serializer_class = ParticipantSerializer
+    filter_backends = [filters.DjangoFilterBackend,]
+    filter_class = ParticipantFilter
+    queryset = Participant.objects.all()
 
     def get(self, request, id, format=None):
         try:
@@ -115,32 +135,21 @@ class ParticipantAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-#Participant Filter
-class ParticipantFilter(django_filters.FilterSet):
-    first_name = django_filters.CharFilter(lookup_expr='iexact')
-    class Meta:
-        model = Participant
-        fields = ['first_name', 'last_name', 'email', 'sex', 'active']
-
-class ParticipantList(FilterView):
-    model = Participant
-    paginate_by = 20
-    filterset_class = ParticipantFilter
-    strict = False
-
-
 class ParticipantAPIListView(generics.ListCreateAPIView):
     serializer_class = ParticipantSerializer
     #Filter for Participants
     filter_backends = [filters.DjangoFilterBackend,]
-    renderer_classes = [AdminRenderer]
     filter_class = ParticipantFilter
     queryset = Participant.objects.all()
+    renderer_classes = [AdminRenderer]
 
-    #Return only participants in a study from a user
     def get_queryset(self):
+        """
+        This view should return a list of all the purchases
+        for the currently authenticated user.
+        """
         user = self.request.user
-        return Participant.objects.filter()
+        return Participant.objects.filter(first_name=user)
 
     def get(self, request, format=None):
         items = Participant.objects.order_by('pk')

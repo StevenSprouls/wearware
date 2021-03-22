@@ -21,7 +21,7 @@ class Study(models.Model):
     active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
-        return "/WearWareRESTAPIstudyhasparticipant/"
+        return ("/WearWareRESTAPIstudyhasparticipant/")
 
     def __str__(self):
         return self.name
@@ -57,6 +57,9 @@ class FitbitAccount(models.Model):
     token_type = models.CharField(max_length=20, blank=True)
     refresh_token = models.CharField(max_length=100, blank=True)
     access_token = models.CharField(max_length=300, blank=True)
+
+    def get_absolute_url(self):
+        return ("/WearWareRESTAPIsyncrecord/")
 
     def __str__(self):
         return self.subject.first_name + '\'s fitbit'
