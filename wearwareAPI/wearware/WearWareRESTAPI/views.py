@@ -10,6 +10,7 @@ from django_filters import rest_framework as filters
 from django_filters.views import FilterView
 import time
 from rest_framework.decorators import api_view
+from rest_framework.renderers import AdminRenderer
 
 
 def index(request):
@@ -57,6 +58,7 @@ class StudyAPIListView(generics.ListCreateAPIView):
     queryset = Study.objects.all()
     #Filter for Studies
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter]
+    renderer_classes = [AdminRenderer]
     filter_class = StudyFilter
 
     #Return only studies from a user
@@ -131,6 +133,7 @@ class ParticipantAPIListView(generics.ListCreateAPIView):
     serializer_class = ParticipantSerializer
     #Filter for Participants
     filter_backends = [filters.DjangoFilterBackend,]
+    renderer_classes = [AdminRenderer]
     filter_class = ParticipantFilter
     queryset = Participant.objects.all()
 
@@ -182,6 +185,7 @@ class FitbitMinuteRecordAPIListView(generics.ListCreateAPIView):
     queryset = FitbitMinuteRecord.objects.all()
     #Filter for Minute Record
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
+    renderer_classes = [AdminRenderer]
     filter_class = FitbitMinuteRecordFilter
     ordering_fields = ['device', 'steps', 'calories', 'mets', 'activity_level', 'distance']
 
@@ -227,6 +231,7 @@ class FitbitHeartRecordAPIListView(generics.ListCreateAPIView):
     queryset = FitbitHeartRecord.objects.all()
     #Filter for HeartRecord
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
+    renderer_classes = [AdminRenderer]
     filter_class = FitbitHeartRecordFilter
     ordering_fields = ['device', 'bpm']
 
@@ -274,6 +279,7 @@ class FitbitSleepRecordAPIListView(generics.ListCreateAPIView):
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
     filter_class = FitbitSleepRecordFilter
     ordering_fields = ['device', 'record_number']
+    renderer_classes = [AdminRenderer]
 
     #Return only sleep record in a study from a user
     def get_queryset(self):
@@ -319,6 +325,7 @@ class SyncRecordAPIListView(generics.ListCreateAPIView):
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
     filter_class = SyncRecordFilter
     ordering_fields = ['device', 'timestamp', 'sync_type', 'successful']
+    renderer_classes = [AdminRenderer]
 
     #Return only sync record in a study from a user
     def get_queryset(self):
@@ -375,6 +382,7 @@ class StudyHasParticipantAPIListView(generics.ListCreateAPIView):
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
     filter_class = StudyHasParticipantFilter
     ordering_fields = ['study', 'participant', 'active', 'data_collection_start_date']
+    renderer_classes = [AdminRenderer]
 
     #Return only Researcher study record in a study from a user
     def get_queryset(self):
@@ -439,6 +447,7 @@ class ResearcherHasStudyAPIListView(generics.ListCreateAPIView):
     filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
     filter_class = ResearcherHasStudyFilter
     ordering_fields = ['researcher', 'study']
+    renderer_classes = [AdminRenderer]
 
     #Return only Researcher study record in a study from a user
     def get_queryset(self):
@@ -500,6 +509,7 @@ class FitbitAccountAPIListView(generics.ListCreateAPIView):
     #Filter for Researcher Study
     filter_backends = [filters.DjangoFilterBackend,]
     filter_class = FitbitAccountFilter
+    renderer_classes = [AdminRenderer]
 
     #Return only fitbitt account record from user
     def get_queryset(self):
@@ -563,6 +573,7 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         queryset = ParticipantData.objects.all()
         #Filter for participant
         filter_backends = [filters.DjangoFilterBackend,]
+        renderer_classes = [AdminRenderer]
         filter_class = ParticipantDataFilter
 
         def get(self, request, format=None):
