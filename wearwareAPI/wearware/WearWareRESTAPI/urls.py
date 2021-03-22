@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from WearWareRESTAPI import views
 from django.urls import path
 from django_filters.views import FilterView
-from django_filters.views import object_filter
+#from WearWareRESTAPI.models import Study
 
 
 
@@ -15,6 +15,7 @@ urlpatterns = [
 
   url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
   url(r'^study/$', views.StudyAPIListView.as_view(), name='study'),
+  #url(r'^study/$', FilterView.as_view(model=Study)),
 
   url(r'^participant/(?P<id>[0-9]+)/$', views.ParticipantAPIView.as_view()),
   url(r'^participant/$', views.ParticipantAPIListView.as_view(), name='participant'),
