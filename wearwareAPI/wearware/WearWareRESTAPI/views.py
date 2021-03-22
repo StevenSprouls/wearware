@@ -8,11 +8,12 @@ from rest_framework import generics
 import django_filters
 from django_filters import rest_framework as filters
 from django_filters.views import FilterView
-
-
+import time
+from rest_framework.decorators import api_view
 
 def index(request):
     return render(request, "index.html")
+
 
 class StudyAPIView(APIView):
     serializer_class = StudySerializer
@@ -49,8 +50,8 @@ class StudyFilter(filters.FilterSet):
         model = Study
         fields = ['name', 'active', 'start_date', 'end_date']
 
-
 class StudyAPIListView(generics.ListCreateAPIView):
+    startT = time.time()
     serializer_class = StudySerializer
     queryset = Study.objects.all()
     #Filter for Studies
@@ -67,12 +68,16 @@ class StudyAPIListView(generics.ListCreateAPIView):
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
         serializer = StudySerializer(result_page, many=True)
+        finishT = time.time() - self.startT
+        print(f'function time: ', finishT, 'ms')
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
         serializer = StudySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            finishT = time.time() - self.startT
+            print(f'function time: ', finishT, 'ms')
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -582,4 +587,3 @@ class ParticipantDataAPIListView(generics.ListCreateAPIView):
         def get_queryset(self):
             user = self.request.user
             return ParticipantData.objects.filter()
-
