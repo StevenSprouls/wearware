@@ -11,6 +11,7 @@ from django_filters.views import FilterView
 import time
 from rest_framework.decorators import api_view
 
+
 def index(request):
     return render(request, "index.html")
 
