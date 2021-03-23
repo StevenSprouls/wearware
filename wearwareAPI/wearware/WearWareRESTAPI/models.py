@@ -8,6 +8,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 import django_filters
 from django_filters import rest_framework as filters
+from django.urls import reverse
 
 
 class Study(models.Model):
@@ -18,6 +19,9 @@ class Study(models.Model):
     end_date = models.DateField()
     comment = models.CharField(max_length=2000, default='', blank=True)
     active = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return ("/WearWareRESTAPIstudyhasparticipant/")
 
     def __str__(self):
         return self.name
@@ -38,10 +42,13 @@ class Participant(models.Model):
     pairing_token = models.UUIDField(default=uuid.uuid4, editable=True)
     active = models.BooleanField(default=True)
 
+    def get_absolute_url(self):
+        return "/WearWareRESTAPIfitbitheartrecord/"
+
     def __str__(self):
         return self.email
 
-class FitbitAccount(models.Model): 
+class FitbitAccount(models.Model):
     #fitbit acc owned by subject
     identifier = models.CharField(max_length=10, db_index=True)
     subject = models.ForeignKey(Participant, db_index=True, on_delete=models.PROTECT)
@@ -50,6 +57,9 @@ class FitbitAccount(models.Model):
     token_type = models.CharField(max_length=20, blank=True)
     refresh_token = models.CharField(max_length=100, blank=True)
     access_token = models.CharField(max_length=300, blank=True)
+
+    def get_absolute_url(self):
+        return ("/WearWareRESTAPIsyncrecord/")
 
     def __str__(self):
         return self.subject.first_name + '\'s fitbit'
@@ -108,6 +118,9 @@ class StudyHasParticipant(models.Model):
     active = models.BooleanField(default=True)
     data_collection_start_date = models.DateField(verbose_name='earliest date for data sync')
 
+    def get_absolute_url(self):
+        return "/WearWareRESTAPIparticipant/"
+
 class ResearcherHasStudy(models.Model):
 
     class Meta:
@@ -128,4 +141,3 @@ class ParticipantData(models.Model):
     activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
     distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
     bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')
-

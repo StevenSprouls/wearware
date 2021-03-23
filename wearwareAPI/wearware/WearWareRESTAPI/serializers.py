@@ -2,7 +2,7 @@ from rest_framework import serializers
 from WearWareRESTAPI.models import *
 
 class AccSerializer(serializers.ModelSerializer):
-    
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
     class Meta:
         model = FitbitAccount
         fields = '__all__'
@@ -11,6 +11,9 @@ class StudySerializer(serializers.ModelSerializer):
     active = serializers.SerializerMethodField()
     start_date = serializers.SerializerMethodField()
     end_date = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
 
     class Meta:
         model = Study
@@ -25,24 +28,29 @@ class StudySerializer(serializers.ModelSerializer):
     def get_end_date(self,obj):
         return obj.end_date
 
+    def get_name(self,obj):
+        return obj.name
+
 class StudyHasParticipantSerializer(serializers.ModelSerializer):
-    
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         model = StudyHasParticipant
         fields = '__all__'
 
 class ResearcherHasStudySerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = ResearcherHasStudy
         fields = '__all__'
-    
+
 
 class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
         fields = '__all__'
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
 class HeartRateRecordSerializer(serializers.ModelSerializer):
 
@@ -77,4 +85,3 @@ class ParticipantDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParticipantData
         fields = ['minute_records', 'heart_records', 'sleep_records']
-
