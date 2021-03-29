@@ -13,6 +13,8 @@ urlpatterns = [
   path("", views.index, name="index"),
   path('__debug__/', include(debug_toolbar.urls)),
 
+  url('/query/', views.get_form, name='query'),
+
   url(r'^fitbitaccount/(?P<id>[0-9]+)/$', views.FitbitAccountAPIView.as_view()),
   url(r'^fitbitaccount/$', views.FitbitAccountAPIListView.as_view(), name='account'),
 
@@ -41,7 +43,6 @@ urlpatterns = [
   url(r'^researcherhasstudy/(?P<id>[0-9]+)/$', views.ResearcherHasStudyAPIView.as_view()),
   url(r'^researcherhasstudy/$', views.ResearcherHasStudyAPIListView.as_view(),name='researcherhasstudy'),
 
-  url(r'^participantdata/(?P<id>[0-9]+)/$', views.ParticipantDataAPIView.as_view()),
-  url(r'^participantdata/$', views.ParticipantDataAPIListView.as_view(),name='participantdata'),
+  url(r'^participantdata/$', views.ParticipantDataAPIView.as_view(), name='participantdata'),
 
 ]

@@ -1,0 +1,14 @@
+{% extends "rest_framework/admin.html" %}
+{% load rest_framework %}
+
+<html><body>
+
+<h1>Query Form</h1>
+
+<form action="{% url 'query' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+
+</body></html>
