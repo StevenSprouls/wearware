@@ -11,6 +11,7 @@ from django_filters.views import FilterView
 import time
 from rest_framework.decorators import api_view
 from rest_framework.renderers import AdminRenderer
+from django.contrib.admin.views.main import PAGE_VAR
 
 
 def index(request):
