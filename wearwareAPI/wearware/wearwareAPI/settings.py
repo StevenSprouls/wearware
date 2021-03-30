@@ -119,6 +119,8 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 DRF_API_LOGGER_DATABASE = True # Default to False
 
 LOGIN_REDIRECT_URL = 'index'
