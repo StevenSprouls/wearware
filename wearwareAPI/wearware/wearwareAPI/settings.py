@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_api_logger',
     'debug_toolbar',
+    'aldjemy',
 ]
 
 REST_FRAMEWORK = {
