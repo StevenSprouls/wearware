@@ -10,10 +10,11 @@ from django_filters.views import FilterView
 
 app_name= 'WearWareRESTAPI'
 urlpatterns = [
-  path("", views.index, name="index"),
+  path("", views.index, name='index'),
   path('__debug__/', include(debug_toolbar.urls)),
 
   url('/query/', views.get_form, name='query'),
+  url(r'^results/$', views.results, name='results'),
 
   url(r'^fitbitaccount/(?P<id>[0-9]+)/$', views.FitbitAccountAPIView.as_view()),
   url(r'^fitbitaccount/$', views.FitbitAccountAPIListView.as_view(), name='account'),
