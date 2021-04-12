@@ -75,13 +75,3 @@ class SyncRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = SyncRecord
         fields = '__all__'
-
-#Serializer for all of the participant data so it can more easily be sorted
-class ParticipantDataSerializer(serializers.ModelSerializer):
-    minute_records = MinuteRecordSerializer( many = True, read_only = True )
-    heart_records = HeartRateRecordSerializer( many = True, read_only = True )
-    sleep_records = SleepRecordSerializer( many = True, read_only = True )
-
-    class Meta:
-        model = ParticipantData
-        fields = ['minute_records', 'heart_records', 'sleep_records']

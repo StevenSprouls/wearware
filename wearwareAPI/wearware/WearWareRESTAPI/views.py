@@ -9,25 +9,57 @@ import django_filters
 from django_filters import rest_framework as filters
 from django_filters.views import FilterView
 import time
-from rest_framework.decorators import api_view
-from rest_framework.renderers import AdminRenderer
+from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRenderer
 from django.contrib.admin.views.main import PAGE_VAR
+from django.http import HttpResponseRedirect
+from .forms import QueryForm
 
+def results(request):
+    return render(request, "reults.html")
+
+def get_form(request):
+    results = None
+
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = QueryForm(request.POST, request.FILES)
+        # check whether it's valid:
+        if form.is_valid():
+            results = form.clean()
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = QueryForm()
+
+    return render(request,'query_form.html', {'form':form, 'results':results})
 
 def index(request):
     return render(request, "index.html")
 
-class StudyFilter(filters.FilterSet):
-    #start_date = filters.DateFilter()
-    class Meta:
-        model = Study
-        fields = ['name', 'active', 'start_date', 'end_date']
+
+class CustomSerializerViewSet(APIView):
+    serializers = {
+        'default' : None,
+    }
+
+    def get_serializer_class(self):
+        return self.serializers.get(self.action, self.serializers['default'])
+
+class ParticipantDataAPIView(CustomSerializerViewSet):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'query_form.html'
+
+    serializers = {
+        'study': StudySerializer,
+        'participant': ParticipantSerializer,
+
+    }
+
+
 
 class StudyAPIView(APIView):
     serializer_class = StudySerializer
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter]
-    renderer_classes = [AdminRenderer]
-    filter_class = StudyFilter
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -57,13 +89,9 @@ class StudyAPIView(APIView):
         return Response(status=204)
 
 class StudyAPIListView(generics.ListCreateAPIView):
-    startT = time.time()
     serializer_class = StudySerializer
     queryset = Study.objects.all()
-    #Filter for Studies
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter]
-    renderer_classes = [AdminRenderer]
-    filter_class = StudyFilter
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only studies from a user
     def get_queryset(self):
@@ -75,39 +103,20 @@ class StudyAPIListView(generics.ListCreateAPIView):
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(items, request)
         serializer = StudySerializer(result_page, many=True)
-        finishT = time.time() - self.startT
-        print(f'function time: ', finishT, 'ms')
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
         serializer = StudySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            finishT = time.time() - self.startT
-            print(f'function time: ', finishT, 'ms')
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
 
-#Participant Filter
-class ParticipantFilter(django_filters.FilterSet):
-    first_name = django_filters.CharFilter(lookup_expr='iexact')
-    class Meta:
-        model = Participant
-        fields = ['first_name', 'last_name', 'email', 'sex', 'active']
-
-class ParticipantList(FilterView):
-    model = Participant
-    paginate_by = 20
-    filterset_class = ParticipantFilter
-    strict = False
-
-
 class ParticipantAPIView(APIView):
     serializer_class = ParticipantSerializer
-    filter_backends = [filters.DjangoFilterBackend,]
-    filter_class = ParticipantFilter
     queryset = Participant.objects.all()
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -138,11 +147,8 @@ class ParticipantAPIView(APIView):
 
 class ParticipantAPIListView(generics.ListCreateAPIView):
     serializer_class = ParticipantSerializer
-    #Filter for Participants
-    filter_backends = [filters.DjangoFilterBackend,]
-    filter_class = ParticipantFilter
     queryset = Participant.objects.all()
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get_queryset(self):
         """
@@ -167,6 +173,7 @@ class ParticipantAPIListView(generics.ListCreateAPIView):
         return Response(serializer.errors, status=400)
 
 class FitbitMinuteRecordAPIView(APIView):
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -185,19 +192,11 @@ class FitbitMinuteRecordAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class FitbitMinuteRecordFilter(filters.FilterSet):
-    class Meta:
-        model = FitbitMinuteRecord
-        fields = ['device', 'steps', 'calories', 'mets', 'activity_level', 'distance']
 
 class FitbitMinuteRecordAPIListView(generics.ListCreateAPIView):
     serializer_class = MinuteRecordSerializer
     queryset = FitbitMinuteRecord.objects.all()
-    #Filter for Minute Record
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    renderer_classes = [AdminRenderer]
-    filter_class = FitbitMinuteRecordFilter
-    ordering_fields = ['device', 'steps', 'calories', 'mets', 'activity_level', 'distance']
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only data in a study from a user
     def get_queryset(self):
@@ -213,6 +212,7 @@ class FitbitMinuteRecordAPIListView(generics.ListCreateAPIView):
 
 
 class FitbitHeartRecordAPIView(APIView):
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -230,20 +230,11 @@ class FitbitHeartRecordAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class FitbitHeartRecordFilter(filters.FilterSet):
-    class Meta:
-        model = FitbitHeartRecord
-        fields = ['device']
-
 
 class FitbitHeartRecordAPIListView(generics.ListCreateAPIView):
     serializer_class = HeartRateRecordSerializer
     queryset = FitbitHeartRecord.objects.all()
-    #Filter for HeartRecord
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    renderer_classes = [AdminRenderer]
-    filter_class = FitbitHeartRecordFilter
-    ordering_fields = ['device', 'bpm']
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only HR in a study from a user
     def get_queryset(self):
@@ -259,6 +250,7 @@ class FitbitHeartRecordAPIListView(generics.ListCreateAPIView):
 
 
 class FitbitSleepRecordAPIView(APIView):
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -276,20 +268,11 @@ class FitbitSleepRecordAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class FitbitSleepRecordFilter(filters.FilterSet):
-    class Meta:
-        model = FitbitSleepRecord
-        fields = ['device', 'record_number']
-
 
 class FitbitSleepRecordAPIListView(generics.ListCreateAPIView):
     serializer_class = SleepRecordSerializer
     queryset = FitbitSleepRecord.objects.all()
-    #Filter for Sleep Record
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    filter_class = FitbitSleepRecordFilter
-    ordering_fields = ['device', 'record_number']
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only sleep record in a study from a user
     def get_queryset(self):
@@ -305,6 +288,7 @@ class FitbitSleepRecordAPIListView(generics.ListCreateAPIView):
 
 
 class SyncRecordAPIView(APIView):
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -322,20 +306,10 @@ class SyncRecordAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class SyncRecordFilter(filters.FilterSet):
-    class Meta:
-        model = SyncRecord
-        fields = ['device', 'timestamp', 'sync_type', 'successful']
-
-
 class SyncRecordAPIListView(generics.ListCreateAPIView):
     serializer_class = SyncRecordSerializer
     queryset = SyncRecord.objects.all()
-    #Filter for sync Record
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    filter_class = SyncRecordFilter
-    ordering_fields = ['device', 'timestamp', 'sync_type', 'successful']
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only sync record in a study from a user
     def get_queryset(self):
@@ -351,6 +325,7 @@ class SyncRecordAPIListView(generics.ListCreateAPIView):
 
 class StudyHasParticipantAPIView(APIView):
     serializer_class = StudyHasParticipantSerializer
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -379,20 +354,11 @@ class StudyHasParticipantAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class StudyHasParticipantFilter(filters.FilterSet):
-    class Meta:
-        model = StudyHasParticipant
-        fields = ['study', 'participant', 'active', 'data_collection_start_date']
-
 
 class StudyHasParticipantAPIListView(generics.ListCreateAPIView):
     serializer_class = StudyHasParticipantSerializer
     queryset = StudyHasParticipant.objects.all()
-    #Filter for participants in study
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    filter_class = StudyHasParticipantFilter
-    ordering_fields = ['study', 'participant', 'active', 'data_collection_start_date']
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only Researcher study record in a study from a user
     def get_queryset(self):
@@ -416,6 +382,7 @@ class StudyHasParticipantAPIListView(generics.ListCreateAPIView):
 
 class ResearcherHasStudyAPIView(APIView):
     serializer_class = ResearcherHasStudySerializer
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def get(self, request, id, format=None):
         try:
@@ -444,20 +411,11 @@ class ResearcherHasStudyAPIView(APIView):
         item.delete()
         return Response(status=204)
 
-class ResearcherHasStudyFilter(filters.FilterSet):
-    class Meta:
-        model = ResearcherHasStudy
-        fields = ['researcher', 'study']
-
 
 class ResearcherHasStudyAPIListView(generics.ListCreateAPIView):
     serializer_class = ResearcherHasStudySerializer
     queryset = ResearcherHasStudy.objects.all()
-    #Filter for Researcher Study
-    filter_backends = [filters.DjangoFilterBackend, filters.OrderingFilter,]
-    filter_class = ResearcherHasStudyFilter
-    ordering_fields = ['researcher', 'study']
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only Researcher study record in a study from a user
     def get_queryset(self):
@@ -480,6 +438,8 @@ class ResearcherHasStudyAPIListView(generics.ListCreateAPIView):
 
 class FitbitAccountAPIView(APIView):
     serializer_class = AccSerializer
+    renderer_classes = [AdminRenderer, JSONRenderer]
+
     def get(self, request, id, format=None):
         try:
             item = FitbitAccount.objects.get(pk=id)
@@ -508,18 +468,10 @@ class FitbitAccountAPIView(APIView):
         return Response(status=204)
 
 
-class FitbitAccountFilter(filters.FilterSet):
-        class Meta:
-            model = FitbitAccount
-            fields = ['identifier', 'subject', 'is_active']
-
 class FitbitAccountAPIListView(generics.ListCreateAPIView):
     serializer_class = AccSerializer
     queryset = FitbitAccount.objects.all()
-    #Filter for Researcher Study
-    filter_backends = [filters.DjangoFilterBackend,]
-    filter_class = FitbitAccountFilter
-    renderer_classes = [AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     #Return only fitbitt account record from user
     def get_queryset(self):
@@ -539,73 +491,3 @@ class FitbitAccountAPIListView(generics.ListCreateAPIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-
-#Views for all of the participant data
-class ParticipantDataAPIView(APIView):
-    serializer_class = ParticipantDataSerializer
-
-    def get(self, request, id, format=None):
-        try:
-            item = ParticipantData.objects.get(pk=id)
-            serializer = ParticipantDataSerializer(item)
-            return Response(serializer.data)
-        except ParticipantData.DoesNotExist:
-            return Response(status=404)
-
-    def put(self, request, id, format=None):
-        try:
-            item = ParticipantData.objects.get(pk=id)
-        except ParticipantData.DoesNotExist:
-            return Response(status=404)
-        serializer = ParticipantDataSerializer(item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-    def delete(self, request, id, format=None):
-        try:
-            item = ParticipantData.objects.get(pk=id)
-        except ParticipantData.DoesNotExist:
-            return Response(status=404)
-        item.delete()
-        return Response(status=204)
-
-#Filter class for participant data
-class ParticipantDataFilter(filters.FilterSet):
-    class Meta:
-        model = ParticipantData
-        fields = ['device', 'steps', 'calories', 'mets',
-                  'activity_level', 'distance', 'bpm' ]
-
-class ParticipantDataAPIListView(generics.ListCreateAPIView):
-        serializer_class = ParticipantDataSerializer
-        queryset = ParticipantData.objects.all()
-        #Filter for participant
-        filter_backends = [filters.DjangoFilterBackend,]
-        renderer_classes = [AdminRenderer]
-        filter_class = ParticipantDataFilter
-
-        def get(self, request, format=None):
-            item = Participant.objects.get(first_name="fn_101")
-            device = FitbitAccount.objects.get(subject=item)
-
-            minute_records = FitbitMinuteRecord.objects.filter()
-            heart_records = FitbitHeartRecord.objects.filter()
-            sleep_records = FitbitSleepRecord.objects.filter()
-            data = {
-                'minute_records': minute_records,
-                'heart_records': heart_records,
-                'sleep_records': sleep_records,
-            }
-            #serializer = ParticipantDataSerializer(data)
-            items = StudyHasParticipant.objects.order_by('pk')
-            paginator = PageNumberPagination()
-            result_page = paginator.paginate_queryset(items, request)
-            serializer = ParticipantDataSerializer(result_page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        #Return only Researcher study record in a study from a user
-        def get_queryset(self):
-            user = self.request.user
-            return ParticipantData.objects.filter()
