@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    {% if user.is_authenticated %}
     {% block head %}
 
       {% block meta %}
@@ -344,4 +345,9 @@
 
   </body>
   {% endblock %}
+  {% else %}
+  <p>It looks like you have been logged out of the WearWare system....</p>
+  <p>Click here to log back in!</p>
+  <a href="accounts/login">WearWare</a>
+{% endif %}
 </html>
