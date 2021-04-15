@@ -491,3 +491,9 @@ class FitbitAccountAPIListView(generics.ListCreateAPIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    def ParticipantInviteView(request):
+        form = ParticipantInviteForm(request.POST or None)
+        if form.is_valid():
+           form.save()
+        

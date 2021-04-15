@@ -1,11 +1,11 @@
 from flask import Flask, request, session, redirect, session, url_for
-from requests_oauthlib import OAuth2Session
 from flask.json import jsonify
 from urllib.parse import urlsplit, urlencode, urlunsplit, urlparse
 import os
 import sys
 import json
 import sqlalchemy
+from requests_oauthlib import OAuth2Session
 from sqlalchemy import create_engine, insert
 import psycopg2
 from flask_mail import Mail,Message
@@ -27,7 +27,6 @@ app.config['MAIL_USERNAME'] = 'wearableinformaticstest2@gmail.com'
 app.config['MAIL_PASSWORD'] = 'B9UUeTfgr2FBFrv'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-
 #index landing page, will be changed upon migration to Amazon EC2
 @app.route('/')
 def index():
@@ -95,4 +94,4 @@ def fitbit_build_auth_url():
 
 if __name__ == "__main__":
     # This allows us to use a plain HTTP callback
-    app.run(debug=True)
+    app.run()

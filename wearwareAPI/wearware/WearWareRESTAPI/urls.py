@@ -45,5 +45,7 @@ urlpatterns = [
   url(r'^researcherhasstudy/$', views.ResearcherHasStudyAPIListView.as_view(),name='researcherhasstudy'),
 
   url(r'^participantdata/$', views.ParticipantDataAPIView.as_view(), name='participantdata'),
+#this is the partcipant invite url
+  url('/participantinvite/', views.ParticipantInviteView),
 
 ]

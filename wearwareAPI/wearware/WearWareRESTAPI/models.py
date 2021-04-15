@@ -141,3 +141,8 @@ class ParticipantData(models.Model):
     activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
     distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
     bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')
+
+#model for a form to invite participant into a study (starts oauth2 process)
+class ParticipantInvite(models.Model):
+    email = models.CharField(max_length=100)
+    study = models.TextField()
