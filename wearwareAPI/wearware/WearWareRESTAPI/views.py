@@ -13,6 +13,7 @@ from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRe
 from django.contrib.admin.views.main import PAGE_VAR
 from django.http import HttpResponseRedirect
 from .forms import QueryForm
+from .forms import ParticipantInviteForm
 
 def results(request):
     return render(request, "reults.html")
@@ -36,6 +37,18 @@ def get_form(request):
 def index(request):
     return render(request, "index.html")
 
+def participantinvite(request):
+    formInput = None
+    if request.method == 'POST':
+        form = ParticipantInviteForm(request.POST, request.FILES)
+        if form.is_valid():
+            formInput = form.clean()
+    else:
+        form = ParticipantInviteForm()
+    return render(request, "participantinvite.html", {'form':form, 'results':formInput})
+
+def success(request):
+    return render(request, "success.html")
 
 class CustomSerializerViewSet(APIView):
     serializers = {
@@ -492,8 +505,5 @@ class FitbitAccountAPIListView(generics.ListCreateAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    def ParticipantInviteView(request):
-        form = ParticipantInviteForm(request.POST or None)
-        if form.is_valid():
-           form.save()
+
         
