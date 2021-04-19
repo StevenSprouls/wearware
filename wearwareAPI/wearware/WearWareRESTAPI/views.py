@@ -16,7 +16,7 @@ from django.shortcuts import redirect
 from .forms import QueryForm
 
 def results(request):
-    return render(request, "reults.html", {'results':results})
+    return render(request, "results.html", {'results':results})
 
 def get_form(request):
     results = None
@@ -29,7 +29,7 @@ def get_form(request):
         # check whether it's valid:
         if form.is_valid():
             results = form.clean()
-            return redirect('WearWareRESTAPI/results/')
+            return redirect('/WearWareRESTAPI/query/results/')
     # if a GET (or any other method) we'll create a blank form
     else:
         form = QueryForm()
