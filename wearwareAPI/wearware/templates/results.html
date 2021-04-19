@@ -12,5 +12,18 @@
 <body>
 
 <h1>Query Results</h1>
+{% csrf_token %}
+{% if results %}
+<table>
+    {% for result in results %}
+    <tr>
+        <td>{{ result.study_id }}</td>
+        <td>{{ result.participant_id}}</td>
+        <td>{{ result.start_date }}</td>
+        <td>{{ result.end_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
 
 </body></html>

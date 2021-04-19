@@ -11,7 +11,8 @@ class QueryForm(forms.Form):
 
         db = query_utils.MyDBUtil()
 
-        self.fields['study_id'] = query_utils.query_all_participants(db, study_id)
+        study_id = self.fields['study_id']
+        results = query_utils.query_all_participants(db, study_id)
 
     def clean(self):
         cleaned_data = super(QueryForm, self).clean()

@@ -12,26 +12,29 @@ import time
 from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRenderer
 from django.contrib.admin.views.main import PAGE_VAR
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from .forms import QueryForm
 
 def results(request):
-    return render(request, "reults.html")
+    return render(request, "reults.html", {'results':results})
 
 def get_form(request):
     results = None
+    context = {}
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = QueryForm(request.POST, request.FILES)
+        form = QueryForm(request.POST or None)
         # check whether it's valid:
         if form.is_valid():
             results = form.clean()
+            return redirect('WearWareRESTAPI/results/')
     # if a GET (or any other method) we'll create a blank form
     else:
         form = QueryForm()
 
-    return render(request,'query_form.html', {'form':form, 'results':results})
+    return render(request,'query_form.html', {'form':form})
 
 def index(request):
     return render(request, "index.html")

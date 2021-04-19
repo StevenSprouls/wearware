@@ -31,19 +31,7 @@
     {% endfor %}
 
     <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
-    {% if results %}
-    <table>
-        {% for result in results %}
-        <tr>
-            <td>{{ result.study_id }}</td>
-            <td>{{ result.participant_id}}</td>
-            <td>{{ result.start_date }}</td>
-            <td>{{ result.end_date }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
-  </form>
 
 </body></html>

@@ -14,14 +14,13 @@ urlpatterns = [
   path('__debug__/', include(debug_toolbar.urls)),
 
   url('/query/', views.get_form, name='query'),
-  url(r'^results/$', views.results, name='results'),
+  url('/results/', views.results, name='results'),
 
   url(r'^fitbitaccount/(?P<id>[0-9]+)/$', views.FitbitAccountAPIView.as_view()),
   url(r'^fitbitaccount/$', views.FitbitAccountAPIListView.as_view(), name='account'),
 
   url(r'^study/(?P<id>[0-9]+)/$', views.StudyAPIView.as_view()),
   url(r'^study/$', views.StudyAPIListView.as_view(), name='study'),
-  #url(r'^study/$', FilterView.as_view(model=Study)),
 
   url(r'^participant/(?P<id>[0-9]+)/$', views.ParticipantAPIView.as_view()),
   url(r'^participant/$', views.ParticipantAPIListView.as_view(), name='participant'),
