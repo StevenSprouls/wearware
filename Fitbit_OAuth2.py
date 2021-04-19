@@ -53,6 +53,7 @@ def callback():
     session['oauth_token'] = token
     fitbit = OAuth2Session(client_id, token=session['oauth_token'])
     response = fitbit.get('https://api.fitbit.com/1/user/-/profile.json')
+    print("is this printing??\n\n")
     response = json.loads(response.text)
     user_timezone = response['user']['timezone']
     user_fullname = response['user']['fullName']

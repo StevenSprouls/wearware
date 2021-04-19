@@ -14,6 +14,18 @@ from django.contrib.admin.views.main import PAGE_VAR
 from django.http import HttpResponseRedirect
 from .forms import QueryForm
 from .forms import ParticipantInviteForm
+from requests_oauthlib import OAuth2Session
+from sqlalchemy import create_engine, insert
+import os
+import json
+
+#Fitbit Client secret, authentication URLs, Database URI
+CLIENT_ID = '22C4KD'
+CLIENT_SECRET = 'd25cd8564b744d78b92b920e074bb555'
+FITBIT_AUTH_URL = 'https://www.fitbit.com/oauth2/authorize'
+FITBIT_AUTH_TOKEN = 'https://api.fitbit.com/oauth2/token'
+DATABASE_URI = 'postgresql://wearware:databit!@wearware.cqr2btyia7sd.us-west-1.rds.amazonaws.com:5432/wearware'
+
 
 def results(request):
     return render(request, "reults.html")
@@ -47,8 +59,29 @@ def participantinvite(request):
         form = ParticipantInviteForm()
     return render(request, "participantinvite.html", {'form':form, 'results':formInput})
 
-def success(request):
-    return render(request, "success.html")
+def callbackauthentication(request):
+    fitbit = OAuth2Session(CLIENT_ID)
+    token = fitbit.fetch_token(FITBIT_AUTH_TOKEN, client_secret=CLIENT_SECRET,
+                               authorization_response=request.get_full_path())
+    
+    fitbit = OAuth2Session(CLIENT_ID, token=token)
+    response = fitbit.get('https://api.fitbit.com/1/user/-/profile.json')
+    response = json.loads(response.text)
+    user_timezone = response['user']['timezone']
+    user_fullname = response['user']['fullName']
+    user_fullname = user_fullname.split(' ')
+    
+    #connecting to our database and setting access_token + refresh_token
+    #plus basic user profile information
+    engine = create_engine(DATABASE_URI)
+    sql_command_participant = 'INSERT INTO public.\"WearWareRESTAPI_participant\" VALUES (1339,\''+user_fullname[0]+'\',\''+user_fullname[1]+'\',\'jensenroe@gmail.com\',\'M\',\'M\',\'40e6215d-b5c6-4896-987c-f30f3678f608\')'
+
+    engine.execute(sql_command_participant)
+
+    sql_command_fitbitaccount = 'INSERT INTO public.\"WearWareRESTAPI_fitbitaccount\" VALUES (DEFAULT,9998887,True,\''+user_timezone+'\',\'auth_token\',\''+str(token['oauth_token']['refresh_token'])+'\',\''+str(token['oauth_token']['refresh_token'])+'\','+str(1339)+')'
+                   
+    engine.execute(sql_command_fitbitaccount)
+    return render(request, "callbackauthentication.html")
 
 class CustomSerializerViewSet(APIView):
     serializers = {
