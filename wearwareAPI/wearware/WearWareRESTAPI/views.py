@@ -16,11 +16,10 @@ from django.shortcuts import redirect
 from .forms import QueryForm
 
 def results(request):
-    return render(request, "results.html", {'results':results})
+    return render(request, "results.html", {'results_list':results_list})
 
 def get_form(request):
-    results = None
-    context = {}
+    results_list = []
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -28,8 +27,10 @@ def get_form(request):
         form = QueryForm(request.POST or None)
         # check whether it's valid:
         if form.is_valid():
-            results = form.clean()
-            return redirect('/WearWareRESTAPI/query/results/')
+            results_list = form.query()
+            #return redirect('/WearWareRESTAPI/query/results/')
+            return render(request, 'results.html', {'results_list':results_list})
+
     # if a GET (or any other method) we'll create a blank form
     else:
         form = QueryForm()

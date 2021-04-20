@@ -18,7 +18,7 @@ class Study(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     comment = models.CharField(max_length=2000, default='', blank=True)
-    active = models.BooleanField(default=True)
+
 
     def get_absolute_url(self):
         return ("/WearWareRESTAPIstudyhasparticipant/")
@@ -40,7 +40,6 @@ class Participant(models.Model):
     sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female'), ('O', 'Other')))
     pairing_token = models.UUIDField(default=uuid.uuid4, editable=True)
-    active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         return "/WearWareRESTAPIfitbitheartrecord/"
@@ -52,7 +51,6 @@ class FitbitAccount(models.Model):
     #fitbit acc owned by subject
     identifier = models.CharField(max_length=10, db_index=True)
     subject = models.ForeignKey(Participant, db_index=True, on_delete=models.PROTECT)
-    is_active = models.BooleanField(default=True)
     timezone = models.CharField(max_length=50)
     token_type = models.CharField(max_length=20, blank=True)
     refresh_token = models.CharField(max_length=100, blank=True)
@@ -115,7 +113,6 @@ class StudyHasParticipant(models.Model):
 
     study = models.ForeignKey(Study, on_delete=models.PROTECT)
     participant = models.ForeignKey(Participant, on_delete=models.PROTECT)
-    active = models.BooleanField(default=True)
     data_collection_start_date = models.DateField(verbose_name='earliest date for data sync')
 
     def get_absolute_url(self):

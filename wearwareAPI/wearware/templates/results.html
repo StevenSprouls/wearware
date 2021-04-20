@@ -13,17 +13,60 @@
 
 <h1>Query Results</h1>
 {% csrf_token %}
-{% if results %}
+{% if results_list %}
 <table>
-    {% for result in results %}
+  {% if result.participant_id %}
+   <td> <p> Participant Id </p> </td>
+   <td> <p> First Name</p> </td>
+   <td> <p> Last Name </p> </td>
+   <td> <p> Email </p> </td>
+   <td> <p> Sex </p> </td>
+   <td> <p> Gender </p> </td>
+   {% endif %}
+
+   {% if result.timestamp %}
+   <td> <p> Time Stamp </p> </td>
+   <td> <p> Heart Rate </p> </td>
+   {% endif %}
+
+    {% for result in results_list %}
     <tr>
-        <td>{{ result.study_id }}</td>
-        <td>{{ result.participant_id}}</td>
-        <td>{{ result.start_date }}</td>
-        <td>{{ result.end_date }}</td>
+      {% if result.participant_id %}
+      <td> {{ result.participant_id }} </td>
+      <td> {{ result.first_name }} </td>
+      <td> {{ result.last_name }} </td>
+      <td> {{ result.email }} </td>
+      <td> {{ result.sex }} </td>
+      <td> {{ result.gender }} </td>
+      {% endif %}
+
+      {% if result.timestamp %}
+      <td> {{ result.device }} </td>
+      <td> {{ result.timestamp }} </td>
+      <td> {{ result.steps }} </td>
+      <td> {{ result.calories }} </td>
+      <td> {{ result.mets }} </td>
+      <td> {{ result.activity_level }} </td>
+      <td> {{ result.distance }} </td>
+      <td> {{ result.deep_sleep_minutes }} </td>
+      <td> {{ result.light_sleep_minutes }} </td>
+      <td> {{ result.rem_sleep_minutes }} </td>
+      <td> {{ result.awake_minutes }} </td>
+      <td> {{ result.total_sleep_minutes }} </td>
+      <td> {{ result.time_in_bed }} </td>
+      <td> {{ result.bpm }} </td>
+
+      {% endif %}
+
     </tr>
     {% endfor %}
 </table>
+
+{% else %}
+  <h2> There are no results for this query </h2>
+
 {% endif %}
+
+
 
 </body></html>

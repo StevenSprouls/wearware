@@ -8,7 +8,6 @@ class AccSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class StudySerializer(serializers.ModelSerializer):
-    active = serializers.SerializerMethodField()
     start_date = serializers.SerializerMethodField()
     end_date = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
