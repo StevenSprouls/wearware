@@ -101,11 +101,6 @@ class SyncRecord(models.Model):
     #A metadata record for a given sync interval.
     device = models.ForeignKey(FitbitAccount, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    sync_type = models.CharField(max_length=100, db_index=True)
-    successful = models.BooleanField(default=True)
-    message = models.CharField(max_length=10000, default='')
 
 class StudyHasParticipant(models.Model):
     class Meta:
