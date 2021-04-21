@@ -39,6 +39,7 @@ class Participant(models.Model):
     email = models.EmailField(max_length=100, db_index=True, unique=True)
     sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female'), ('O', 'Other')))
+    unique_identifier = models.CharField(max_length=10)
     pairing_token = models.UUIDField(default=uuid.uuid4, editable=True)
 
     def get_absolute_url(self):
