@@ -37,7 +37,7 @@ class Participant(models.Model):
 
     #maybe get rid of fn & last name and replace with researcher given nickname
     #and then make nickname db_index=True
-    nickname = models.CharField(max_length=50, db_index=True, unique=True)
+    nickname = models.CharField(max_length=15, db_index=True, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female'), ('O', 'Other')))
