@@ -34,9 +34,11 @@ class Study(models.Model):
 
 class Participant(models.Model):
     #subject in a study, owns a fitbit account
-    first_name = models.CharField(max_length=25)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100, db_index=True, unique=True)
+
+    #maybe get rid of fn & last name and replace with researcher given nickname
+    #and then make nickname db_index=True
+    nickname = models.CharField(max_length=50, db_index=True, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
     sex = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female')))
     gender = models.CharField(max_length=1, choices=(('M', 'Male'), ('F', 'Female'), ('O', 'Other')))
     pairing_token = models.UUIDField(default=uuid.uuid4, editable=True)
@@ -49,7 +51,7 @@ class Participant(models.Model):
 
 class FitbitAccount(models.Model):
     #fitbit acc owned by subject
-    identifier = models.CharField(max_length=10, db_index=True)
+    identifier = models.CharField(max_length=10)
     subject = models.ForeignKey(Participant, db_index=True, on_delete=models.PROTECT)
     timezone = models.CharField(max_length=50)
     token_type = models.CharField(max_length=20, blank=True)
@@ -66,7 +68,7 @@ class FitbitMinuteRecord(models.Model):
     #a single minute record owned by a fitbit account
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(db_index=True)
-    steps = models.IntegerField(db_index=True, null=True, blank=True)
+    steps = models.IntegerField(null=True, blank=True)
     calories = models.FloatField(null=True, blank=True)
     mets = models.FloatField(null=True, blank=True)
     activity_level = models.IntegerField(null=True, blank=True)
@@ -75,18 +77,22 @@ class FitbitMinuteRecord(models.Model):
     def __str__(self):
         return self.device.subject.email + ' fitbit @ ' + str(self.timestamp)
 
+    class Meta:
+        unique_together = ('timestamp', 'device')
+
 class FitbitHeartRecord(models.Model):
     #a single heart rate record owned by a minute record...owned by the minute record rather than the participant as this is where the timestamp is located
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
     second = models.IntegerField()
     bpm = models.IntegerField()
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(db_index=True)
+    class Meta:
+        unique_together = ('timestamp', 'device')
 
 class FitbitSleepRecord(models.Model):
     #a single sleep record related to a fitbit account
     device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
-    timestamp = models.DateField()
-    record_number = models.IntegerField()
+    timestamp = models.DateField(db_index=True)
     deep_sleep_minutes = models.IntegerField(null=True, blank=True)
     light_sleep_minutes = models.IntegerField(null=True, blank=True)
     rem_sleep_minutes = models.IntegerField(null=True, blank=True)
@@ -95,12 +101,12 @@ class FitbitSleepRecord(models.Model):
     time_in_bed = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        unique_together = ('timestamp', 'record_number')
+        unique_together = ('timestamp', 'device')
 
 class SyncRecord(models.Model):
     #A metadata record for a given sync interval.
-    device = models.ForeignKey(FitbitAccount, on_delete=models.PROTECT)
-    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    device = models.ForeignKey(FitbitAccount, db_index=True, on_delete=models.PROTECT)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 class StudyHasParticipant(models.Model):
     class Meta:
@@ -123,13 +129,3 @@ class ResearcherHasStudy(models.Model):
 
     def __str__(self):
         return self.researcher.email
-
-class ParticipantData(models.Model):
-    objects = FitbitHeartRecord(), FitbitMinuteRecord(), FitbitSleepRecord()
-    device = models.ManyToManyField(FitbitHeartRecord, related_name='+')
-    steps = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    calories = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    mets = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    activity_level = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    distance = models.ManyToManyField(FitbitMinuteRecord, related_name='+')
-    bpm = models.ManyToManyField(FitbitHeartRecord, related_name='+')

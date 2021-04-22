@@ -34,8 +34,13 @@ class QueryForm(forms.Form):
 
         results_list = []
         for row in results:
-            results_list.append(row.__dict__)
+            #output YYYY-MM-DD HH:MM:SS
+            record = row.__dict__
+            record['timestamp'] = record.strftime('%Y-%m-%d %H:%M:%S') #this might break
+            results_list.append(record)
         return results_list
+
+
 
     def clean(self):
         cleaned_data = super(QueryForm, self).clean()

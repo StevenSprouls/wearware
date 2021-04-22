@@ -15,34 +15,19 @@
 {% csrf_token %}
 {% if results_list %}
 <table>
-  {% if result.participant_id %}
-   <td> <p> Participant Id </p> </td>
-   <td> <p> First Name</p> </td>
-   <td> <p> Last Name </p> </td>
-   <td> <p> Email </p> </td>
-   <td> <p> Sex </p> </td>
-   <td> <p> Gender </p> </td>
-   {% endif %}
-
-   {% if result.timestamp %}
-   <td> <p> Time Stamp </p> </td>
-   <td> <p> Heart Rate </p> </td>
-   {% endif %}
-
     {% for result in results_list %}
     <tr>
-      {% if result.participant_id %}
+
       <td> {{ result.participant_id }} </td>
-      <td> {{ result.first_name }} </td>
-      <td> {{ result.last_name }} </td>
+      <td> {{ result.nickname }} </td>
       <td> {{ result.email }} </td>
       <td> {{ result.sex }} </td>
       <td> {{ result.gender }} </td>
-      {% endif %}
 
-      {% if result.timestamp %}
+
+
       <td> {{ result.device }} </td>
-      <td> {{ result.timestamp }} </td>
+      <td> {{ result.timestamp }} </td> 
       <td> {{ result.steps }} </td>
       <td> {{ result.calories }} </td>
       <td> {{ result.mets }} </td>
@@ -56,7 +41,7 @@
       <td> {{ result.time_in_bed }} </td>
       <td> {{ result.bpm }} </td>
 
-      {% endif %}
+
 
     </tr>
     {% endfor %}

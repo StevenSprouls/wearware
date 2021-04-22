@@ -4,15 +4,10 @@ from rest_framework.views import APIView
 from WearWareRESTAPI.serializers import *
 from WearWareRESTAPI.models import *
 from django.shortcuts import render
+from django.shortcuts import redirect
 from rest_framework import generics
-import django_filters
-from django_filters import rest_framework as filters
-from django_filters.views import FilterView
-import time
 from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRenderer
 from django.contrib.admin.views.main import PAGE_VAR
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from .forms import QueryForm
 
 def results(request):

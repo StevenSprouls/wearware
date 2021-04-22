@@ -51,7 +51,9 @@ def query_all_participants(db,study_id:int):
 
      return records
 
-def query_data(db,study_id:int, record_type, participant_id=-1, start_date=None, end_date=None):
+def query_data(db,study_id:int, record_type, nickname="", start_date="", end_date=""):
+    session = db.get_session()
+
     if record_type == 'hr':
         table = FitbitHeartRecord.sa
     elif record_type == 'sleep':
@@ -59,20 +61,29 @@ def query_data(db,study_id:int, record_type, participant_id=-1, start_date=None,
     elif record_type == 'activity':
         table = FitbitMinuteRecord.sa
 
-    if start_date is None or start_date == "":
-        start_date = Study.sa.start_date # maybe .id?
-    if end_date is None or end_date == "":
-        end_date = Study.sa.end_date
-
-    records = ''
-    id_filter = Study.sa.id == study_id
-    participant_filter = Participant.sa.id == participant_id
-    start_date_filter = table.timestamp >= start_date
-    end_date_filter = table.timestamp < end_date
-
-    session = db.get_session()
-
     try:
+
+        if start_date == "":
+            start_date = session.query(Participant.sa.id)\
+                .with_entities(Participant.sa.start_date)
+            print(start_date)
+        if end_date == "":
+            end_date = session.query(Participant.sa.id)
+                .with_entities(Participant.sa.end_date)
+            print(end_date)
+
+        if  nickname == "":
+            participant_id=-1
+        else:
+            nickname_filter = Participant.sa.nickname == nickname
+            participant_id = session.query(Participant.sa).filter(nickname_filter).one()
+
+        records = ''
+        id_filter = Study.sa.id == study_id
+        participant_filter = Participant.sa.id == participant_id
+        start_date_filter = table.timestamp >= start_date
+        end_date_filter = table.timestamp < end_date
+
         records = session.query(table)\
             .join(FitbitAccount.sa) \
             .join(Participant.sa) \
@@ -83,8 +94,7 @@ def query_data(db,study_id:int, record_type, participant_id=-1, start_date=None,
             .filter(end_date_filter)
 
         if int(participant_id) >= 0:
-            records.filter(participant_filter)
-            print("bloopblop")
+            records = records.filter(participant_filter)
     except:
         session.rollback()
         raise
