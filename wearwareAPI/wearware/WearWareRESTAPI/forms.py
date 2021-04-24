@@ -1,5 +1,7 @@
 from django import forms
 from WearWareRESTAPI import models, query_utils
+import csv
+from django.http import StreamingHttpResponse
 
 class QueryForm(forms.Form):
     RECORD_CHOICES=[
@@ -15,6 +17,25 @@ class QueryForm(forms.Form):
     start_date = forms.DateField(required=False)
     end_date = forms.DateField(required=False)
 
+    class Echo:
+        #An object that implements just the write method of the file-like interface.
+
+        def write(self, value):
+            #Write the value by returning it, instead of storing in a buffer.
+            return value
+
+    def csv_response(request, results_list):
+        #A view that streams a large CSV file.
+        # Generate a sequence of rows. The range is based on the maximum number of
+        # rows that can be handled by a single sheet in most spreadsheet applications.
+        #rows = (["Row {}".format(idx), str(idx)] for idx in range(65536))
+        pseudo_buffer = QueryForm.Echo()
+        writer = csv.writer(pseudo_buffer)
+        rows = (csv_writer.writerow(row) for row in results_list)
+
+        response = StreamingHttpResponse(rows, content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="query_results.csv"'
+        return response
 
     def query(self):
 
@@ -39,9 +60,8 @@ class QueryForm(forms.Form):
             if record_type != 'participant':
                 record['timestamp'] = record['timestamp'].strftime('%Y-%m-%d, %H:%M:%S') #this might break
             results_list.append(record)
+            self.csv_response(results_list)
         return results_list
-
-
 
     def clean(self):
         cleaned_data = super(QueryForm, self).clean()

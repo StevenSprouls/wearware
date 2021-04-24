@@ -9,6 +9,7 @@ from rest_framework import generics
 from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRenderer
 from django.contrib.admin.views.main import PAGE_VAR
 from .forms import QueryForm
+from django.template import loader
 
 def results(request):
     return render(request, "results.html", {'results_list':results_list})
@@ -23,7 +24,6 @@ def get_form(request):
         # check whether it's valid:
         if form.is_valid():
             results_list = form.query()
-            #return redirect('/WearWareRESTAPI/query/results/')
             return render(request, 'results.html', {'results_list':results_list})
 
     # if a GET (or any other method) we'll create a blank form
