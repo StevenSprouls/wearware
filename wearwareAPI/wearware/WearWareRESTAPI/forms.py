@@ -58,7 +58,7 @@ class QueryForm(forms.Form):
             #output YYYY-MM-DD HH:MM:SS
             record = row.__dict__
             if record_type != 'participant':
-                record['timestamp'] = record['timestamp'].strftime('%Y-%m-%d, %H:%M:%S') #this might break
+                record['timestamp'] = record['timestamp'].strftime('%Y-%m-%d, %H:%M:%S')
             results_list.append(record)
             self.csv_response(results_list)
         return results_list
@@ -73,7 +73,7 @@ class QueryForm(forms.Form):
 
         if not study_id and not participant_id and not start_date:
             raise forms.ValidationError('No such exists')
-            
+
 class ParticipantInviteForm(forms.Form):
     participant_email = forms.CharField(max_length=100)
     participant_study = forms.CharField(max_length=100)

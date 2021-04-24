@@ -43,6 +43,6 @@ urlpatterns = [
   url(r'^researcherhasstudy/$', views.ResearcherHasStudyAPIListView.as_view(),name='researcherhasstudy'),
 
   url(r'^participantdata/$', views.ParticipantDataAPIView.as_view(), name='participantdata'),
-  url("/participantinvite/", views.participantinvite, name='participantinvite')
-  url("/callbackauthentication/", views.callbackauthentication, name='callbackauthentication')
+  url("/participantinvite/", views.participantinvite, name='participantinvite'),
+  url("/callbackauthentication/", views.callbackauthentication, name='callbackauthentication'),
 ]
