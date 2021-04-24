@@ -73,3 +73,7 @@ class QueryForm(forms.Form):
 
         if not study_id and not participant_id and not start_date:
             raise forms.ValidationError('No such exists')
+            
+class ParticipantInviteForm(forms.Form):
+    participant_email = forms.CharField(max_length=100)
+    participant_study = forms.CharField(max_length=100)

@@ -54,7 +54,41 @@ class ParticipantDataAPIView(CustomSerializerViewSet):
 
     }
 
+def participantinvite(request):
+    formInput = None
+    if request.method == 'POST':
+        form = ParticipantInviteForm(request.POST, request.FILES)
+        if form.is_valid():
+            formInput = form.clean()
+    else:
+        form = ParticipantInviteForm()
+    return render(request, "participantinvite.html", {'form':form, 'results':formInput})
 
+def callbackauthentication(request):
+    fitbit = OAuth2Session(CLIENT_ID)
+    token = fitbit.fetch_token(FITBIT_AUTH_TOKEN, client_secret=CLIENT_SECRET,
+                               authorization_response=request.get_full_path())
+    
+    fitbit = OAuth2Session(CLIENT_ID, token=token)
+    response = fitbit.get('https://api.fitbit.com/1/user/-/profile.json')
+    response = json.loads(response.text)
+    user_timezone = response['user']['timezone']
+
+    #nickname that will set a new user in the database, 7 characters long with a mix of digits and characters
+    nickname_len = 7
+    user_nickname = ''.join(random.choices(string.ascii_uppercase + string.digits, k = nickname_len))
+    
+    #connecting to our database and setting access_token + refresh_token
+    #plus basic user profile information
+    engine = create_engine(DATABASE_URI)
+    sql_command_participant = 'INSERT INTO public.\"WearWareRESTAPI_participant\" VALUES (DEFAULT,\',\'testemail@test.com\',\'M\',\'M\',\'40e6215d-b5c6-4896-987c-f30f3678f608\',\''+user_nickname+'\''
+
+    engine.execute(sql_command_participant)
+
+    sql_command_fitbitaccount = 'INSERT INTO public.\"WearWareRESTAPI_fitbitaccount\" VALUES (DEFAULT,9998887,\''+user_timezone+'\',\'auth_token\',\''+str(token['oauth_token']['refresh_token'])+'\',\''+str(token['oauth_token']['access_token'])+'\','+str(1339)+')'
+                   
+    engine.execute(sql_command_fitbitaccount)
+    return render(request, "callbackauthentication.html")
 
 class StudyAPIView(APIView):
     serializer_class = StudySerializer
