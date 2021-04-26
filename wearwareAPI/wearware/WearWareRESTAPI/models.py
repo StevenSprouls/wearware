@@ -14,6 +14,7 @@ from django.urls import reverse
 class Study(models.Model):
     #a study owns subjects
     name = models.CharField(max_length=150, default='')
+    short_name = models.CharField(max_length=15, default='')
     creation_time = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
     end_date = models.DateField()

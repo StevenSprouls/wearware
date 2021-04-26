@@ -12,7 +12,7 @@ class QueryForm(forms.Form):
     ]
 
     record_type = forms.CharField(label='Record Type', widget=forms.Select(choices=RECORD_CHOICES))
-    study_id = forms.IntegerField()
+    short_name= forms.CharField(max_length=15)
     nickname = forms.CharField(max_length=15, required=False)
     start_date = forms.DateField(required=False)
     end_date = forms.DateField(required=False)
@@ -33,8 +33,10 @@ class QueryForm(forms.Form):
         writer = csv.writer(pseudo_buffer)
         rows = (csv_writer.writerow(row) for row in results_list)
 
+        attachment = 'query_result.csv'
         response = StreamingHttpResponse(rows, content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="query_results.csv"'
+        response["Content-Disposition"] = 'attachment; filename="{}"'.format(attachment)
+
         return response
 
     def query(self):
@@ -43,15 +45,15 @@ class QueryForm(forms.Form):
         self.clean()
 
         record_type = self.data['record_type']
-        study_id = self.data['study_id']
+        short_name = self.data['short_name']
         nickname = self.data['nickname']
         start_date = self.data['start_date']
         end_date = self.data['end_date']
 
         if(record_type == 'participant'):
-            results = query_utils.query_all_participants(db, study_id).all()
+            results = query_utils.query_all_participants(db, short_name).all()
         else:
-            results = query_utils.query_data(db, study_id, record_type, nickname, start_date, end_date).all()
+            results = query_utils.query_data(db, short_name, record_type, nickname, start_date, end_date).all()
 
         results_list = []
         for row in results:
@@ -60,18 +62,18 @@ class QueryForm(forms.Form):
             if record_type != 'participant':
                 record['timestamp'] = record['timestamp'].strftime('%Y-%m-%d, %H:%M:%S')
             results_list.append(record)
-            self.csv_response(results_list)
+        self.csv_response(results_list)
         return results_list
 
     def clean(self):
         cleaned_data = super(QueryForm, self).clean()
-        study_id = cleaned_data.get('study_id')
+        short_name = cleaned_data.get('short_name')
         nickname = cleaned_data.get('nickname')
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
         return cleaned_data
 
-        if not study_id and not participant_id and not start_date:
+        if not short_name and not participant_id and not start_date:
             raise forms.ValidationError('No such exists')
 
 class ParticipantInviteForm(forms.Form):

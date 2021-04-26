@@ -34,11 +34,14 @@ class MyDBUtil(object):
   self.connect()
   return MyDBUtil.Session()
 
-def query_all_participants(db,study_id:int):
-     records = ''
-     id_filter = Study.sa.id == study_id
+def query_all_participants(db,short_name):
+     records = ""
      session = db.get_session()
+     short_name_filter = Study.sa.short_name == short_name
      try:
+        study = session.query(Study.sa).filter(short_name_filter).first()
+        study_id = study.id
+        id_filter = Study.sa.id == study_id
         records = session.query(Participant.sa)\
             .join(StudyHasParticipant.sa)\
             .join(Study.sa)\
@@ -51,10 +54,10 @@ def query_all_participants(db,study_id:int):
 
      return records
 
-def query_data(db,study_id:int, record_type, nickname="", start_date="", end_date=""):
+def query_data(db,short_name, record_type, nickname="", start_date="", end_date=""):
     session = db.get_session()
     nickname_filter = Participant.sa.nickname == nickname
-    id_filter = Study.sa.id == study_id
+    short_name_filter = Study.sa.short_name == short_name
     timestamp_format = '%Y-%m-%d'
 
     if record_type == 'hr':
@@ -65,8 +68,9 @@ def query_data(db,study_id:int, record_type, nickname="", start_date="", end_dat
         table = FitbitMinuteRecord.sa
 
     try:
-        study = session.query(Study.sa).filter(id_filter).first()
-
+        study = session.query(Study.sa).filter(short_name_filter).first()
+        study_id = study.id
+        id_filter = Study.sa.id == study_id
         if start_date == "":
             start_date = study.start_date
 
