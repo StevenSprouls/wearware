@@ -1,9 +1,10 @@
 import debug_toolbar
 from django.conf import settings
 from django.conf.urls import include, url
-from WearWareRESTAPI import views
+from WearWareRESTAPI import views, forms
 from django.urls import path
 from django_filters.views import FilterView
+from WearWareRESTAPI.forms import QueryForm
 #from WearWareRESTAPI.models import Study
 
 
@@ -14,6 +15,7 @@ urlpatterns = [
   path('__debug__/', include(debug_toolbar.urls)),
 
   url(r'^/query/$', views.get_form, name='query'),
+
 
   url(r'^fitbitaccount/(?P<id>[0-9]+)/$', views.FitbitAccountAPIView.as_view()),
   url(r'^fitbitaccount/$', views.FitbitAccountAPIListView.as_view(), name='account'),
