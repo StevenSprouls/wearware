@@ -1,0 +1,64 @@
+{% load rest_framework %}
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <title>Query</title>
+</head>
+
+<body>
+
+<h1>Query Results</h1>
+<form action="{% url 'WearWareRESTAPI:csv' %}" method="POST">
+    {% csrf_token %}
+    {{ download_form.as_p }}
+    <p>
+        <input type="submit" class="btn btn-primary" name="submit" value="Download" />
+    </p>
+</form>
+
+{% csrf_token %}
+{% if results_list %}
+<table>
+    {% for result in results_list %}
+    <tr>
+
+      <td> {{ result.participant_id }} </td>
+      <td> {{ result.nickname }} </td>
+      <td> {{ result.email }} </td>
+      <td> {{ result.sex }} </td>
+      <td> {{ result.gender }} </td>
+
+
+
+      <td> {{ result.device }} </td>
+      <td> {{ result.timestamp }} </td>
+      <td> {{ result.steps }} </td>
+      <td> {{ result.calories }} </td>
+      <td> {{ result.mets }} </td>
+      <td> {{ result.activity_level }} </td>
+      <td> {{ result.distance }} </td>
+      <td> {{ result.deep_sleep_minutes }} </td>
+      <td> {{ result.light_sleep_minutes }} </td>
+      <td> {{ result.rem_sleep_minutes }} </td>
+      <td> {{ result.awake_minutes }} </td>
+      <td> {{ result.total_sleep_minutes }} </td>
+      <td> {{ result.time_in_bed }} </td>
+      <td> {{ result.bpm }} </td>
+
+
+
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+  <h2> There are no results for this query </h2>
+
+{% endif %}
+
+
+</body></html>
