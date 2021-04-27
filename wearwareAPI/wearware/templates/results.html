@@ -12,6 +12,14 @@
 <body>
 
 <h1>Query Results</h1>
+<form action="{% url 'WearWareRESTAPI:csv' %}" method="POST">
+    {% csrf_token %}
+    {{ download_form.as_p }}
+    <p>
+        <input type="submit" class="btn btn-primary" name="submit" value="Download" />
+    </p>
+</form>
+
 {% csrf_token %}
 {% if results_list %}
 <table>
@@ -27,7 +35,7 @@
 
 
       <td> {{ result.device }} </td>
-      <td> {{ result.timestamp }} </td> 
+      <td> {{ result.timestamp }} </td>
       <td> {{ result.steps }} </td>
       <td> {{ result.calories }} </td>
       <td> {{ result.mets }} </td>
@@ -51,7 +59,6 @@
   <h2> There are no results for this query </h2>
 
 {% endif %}
-
 
 
 </body></html>

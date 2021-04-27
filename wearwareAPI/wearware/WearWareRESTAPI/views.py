@@ -8,14 +8,42 @@ from django.shortcuts import redirect
 from rest_framework import generics
 from rest_framework.renderers import AdminRenderer, TemplateHTMLRenderer, JSONRenderer
 from django.contrib.admin.views.main import PAGE_VAR
-from .forms import QueryForm
+from .forms import QueryForm, DownloadForm
 from django.template import loader
+import csv
+from django.http import StreamingHttpResponse
+from wsgiref.util import FileWrapper
 
-def results(request):
-    return render(request, "results.html", {'results_list':results_list})
+def csv_response(request):
+    #A view that streams a large CSV file.
+    # Generate a sequence of rows. The range is based on the maximum number of
+    # rows that can be handled by a single sheet in most spreadsheet applications.
+    query_form = QueryForm(request.POST or None)
+    results_list = query_form.query()
+    pseudo_buffer = QueryForm.Echo()
+    writer = csv.writer(pseudo_buffer)
+    rows = (writer.writerow(list(row.values())[1:]) for row in results_list)
+
+    form = DownloadForm(request.POST)
+
+    try:
+        assert form.is_valid()
+    except AssertionError:
+        error = form.errors
+        rows = error
+    record_type = form.cleaned_data.get('record_type')
+    short_name = form.cleaned_data.get('short_name')
+    nickname = form.cleaned_data.get('nickname')
+    start_date = form.cleaned_data.get('start_date')
+    end_date = form.cleaned_data.get('end_date')
+    attachment = 'query_result.csv'
+    response = StreamingHttpResponse(rows, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=query_result.csv'
+    return response
 
 def get_form(request):
     results_list = []
+    download_form = None
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -23,9 +51,24 @@ def get_form(request):
         form = QueryForm(request.POST or None)
         # check whether it's valid:
         if form.is_valid():
+            #results = form.query()
             results_list = form.query()
-            #QueryForm.csv_response(request, results_list)
-            return render(request, 'results.html', {'results_list':results_list})
+            record_type = form.cleaned_data.get('record_type')
+            short_name = form.cleaned_data.get('short_name')
+            nickname = form.cleaned_data.get('nickname')
+            start_date = form.cleaned_data.get('start_date')
+            end_date = form.cleaned_data.get('end_date')
+            download_form = DownloadForm(initial={
+                'record_type' : record_type,
+                'short_name' : short_name,
+                'nickname' : nickname,
+                'start_date' : start_date,
+                'end_date' : end_date
+            })
+            if download_form['nickname'] == None:
+                download_form['nickname'] = ""
+                print("this is nickname" + nickname)
+            return render(request, 'results.html', {'results_list':results_list, 'download_form':download_form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
